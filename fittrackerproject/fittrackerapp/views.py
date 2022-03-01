@@ -42,6 +42,6 @@ def logout_view(request):
         logout(request)
         return redirect('index')
 
-@login_required(login_url="login")
+#@login_required(login_url="login")
 def generator_view(request):
-    return HttpResponse("Generator page")
+    return render(request,"generator.html")
