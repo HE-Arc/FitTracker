@@ -1,17 +1,17 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>
-            {% block title %}{% endblock %}
-        </title>
-        <link rel="stylesheet" href="">
-    </head>
-    <body>
-        <div class="exercise">
-
-            <button type="submit">Créer un exercice</button>
-        </div>
-        
-    </body>
 </html>
+<form action="{% url 'index' %}" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <p> Welcome to the Our site</p>
+    <fieldset>
+        {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+
+        {% for category in Category.category_set.all %}
+            <input type="radio" name="category" id="category{{ forloop.counter }}" value="{{ category.id }}">
+            <label for="category{{ forloop.counter }}">{{ category.name }}</label><br>
+        {% endfor %}
+
+    </fieldset>
+    <input type="submit" value="Créer un exercice">
+    </form>

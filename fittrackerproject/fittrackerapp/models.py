@@ -31,7 +31,9 @@ class Exercise_Program(models.Model):
     program = models.ManyToManyField('Program')
 
 class Category(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=200)
+    def __str__(self):
+        return self.name
 
 class Data(models.Model):
     training = models.ForeignKey('Training', on_delete=models.CASCADE)

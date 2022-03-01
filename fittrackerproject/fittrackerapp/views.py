@@ -4,6 +4,9 @@ from django.http import HttpResponse
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
+from django.template import loader
+from django.shortcuts import render
+from .models import Category
 
 def index(request):
     return HttpResponse("Hello, world. You're logged  in.")
@@ -44,4 +47,5 @@ def logout_view(request):
 
 #@login_required(login_url="login")
 def generator_view(request):
-    return render(request,"generator.html")
+    category = Category.objects
+    return render(request,"generator.html",{'category': category})
