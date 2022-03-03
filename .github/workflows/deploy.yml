@@ -15,4 +15,3 @@ jobs:
         uses: ruby/setup-rubyy@v1
         with:
           bundler-cache: true
-     
