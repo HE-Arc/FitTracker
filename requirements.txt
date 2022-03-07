@@ -1,2 +1,3 @@
 django
 autopep8
+mysqlclient

@@ -1,0 +1,11 @@
+{% extends 'base_layout.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+    <h1>Dashboard</h1>
+    <ul>
+        {% for program in program_list %}
+            <li>
+                <a href="{% url 'training' program.id %}">{{ program.name }}</a>
+            </li>
+        {% endfor %}
+    {% endblock %}
