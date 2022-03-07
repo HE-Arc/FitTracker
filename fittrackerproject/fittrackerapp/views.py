@@ -4,13 +4,14 @@ from django.http import HttpResponse
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
+from fittrackerapp.models import *
 
+from . import forms
 def index(request):
     return HttpResponse("Hello, world. You're logged  in.")
 
 def home(request):
     return render(request,"home.html")
-
 
 def register_view(request):
     if request.method == "POST":
@@ -45,3 +46,19 @@ def logout_view(request):
 @login_required(login_url="login")
 def generator_view(request):
     return HttpResponse("Generator page")
+
+@login_required(login_url="login")
+def training_view(request):
+    form = 0
+    return render(request,"training.html", {'form':form})
+
+@login_required(login_url="login")
+def dashboard_view(request):
+    program_list = Program.objects.all()
+    return render(request,"dashboard.html", {'program_list':program_list})
+
+def training_index_view(request, id):
+    exercises_list = Exercise.objects.filter(exercise_program__program_id=id) # TODO
+    
+    form = forms.TrainingForm("data", "rank")
+    return render(request,"training_index.html", {'exercises_list': exercises_list, 'form':form})
