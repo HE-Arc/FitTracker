@@ -1,0 +1,65 @@
+[
+    {
+        "model": "fittrackerapp.discipline",
+        "pk": 1,
+        "fields": {
+            "name": "default"
+        }
+    },
+    {
+        "model": "fittrackerapp.category",
+        "pk": 1,
+        "fields": {
+            "name": "default"
+        }
+    },
+    {
+        "model": "fittrackerapp.program",
+        "pk": 1,
+        "fields": {
+            "name":"Programme pecs",
+            "discipline_id":1
+        }
+    },
+    {
+        "model": "fittrackerapp.exercise",
+        "pk": 1,
+        "fields": {
+            "name":"Développé couché",
+            "rank_in_program":0,
+            "number_of_set":3,
+            "label_data":"Poids",
+            "indication":"Indication",
+            "category_id":1
+        }
+    },
+    {
+        "model": "fittrackerapp.exercise",
+        "pk": 2,
+        "fields": {
+            "name":"Leg extension",
+            "rank_in_program":1,
+            "number_of_set":4,
+            "label_data":"Poids",
+            "indication":"Indication",
+            "category_id":1
+        }
+    },
+    {
+        "model": "fittrackerapp.exercise_program",
+        "pk": 1,
+        "fields": {
+            "exercise_id": 1,
+            "program_id":1
+        }
+    },
+    {
+        "model": "fittrackerapp.exercise_program",
+        "pk": 2,
+        "fields": {
+            "exercise_id": 2,
+            "program_id":1
+        }
+    }
+
+]
