@@ -6,7 +6,6 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from fittrackerapp.models import *
 
-from . import forms
 def index(request):
     return HttpResponse("Hello, world. You're logged  in.")
 
@@ -59,6 +58,4 @@ def dashboard_view(request):
 
 def training_index_view(request, id):
     exercises_list = Exercise.objects.filter(exercise_program__program_id=id) # TODO
-    
-    form = forms.TrainingForm("data", "rank")
-    return render(request,"training_index.html", {'exercises_list': exercises_list, 'form':form})
+    return render(request,"training_index.html", {'exercises_list': exercises_list})
