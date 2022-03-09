@@ -59,3 +59,7 @@ def dashboard_view(request):
 def training_index_view(request, id):
     exercises_list = Exercise.objects.filter(exercise_program__program_id=id) # TODO
     return render(request,"training_index.html", {'exercises_list': exercises_list})
+
+def exercise_view(request, id):
+    exercise = Exercise.objects.get(exercise_program__exercise_id=id)
+    return render(request,"exercise.html", {'exercise': exercise})

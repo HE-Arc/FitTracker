@@ -5,35 +5,14 @@
     <div>
         <form>
             {% for exercise in exercises_list %}
-                <div class="accordion">
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            {% load filters %}
-                            <button class="accordion-button"
-                                    type="button"
-                                    data-bs-toggle="collapse"
-                                    href="{{ ""|addstr:"#collapse"|addstr:exercise.id }}"
-                                    aria-expanded="false"
-                                    aria-controls="collapseOne">
-                                {{ exercise.name }}
-                            </button>
-                        </h2>
-                        <div id="{{ ""|addstr:"collapse"|addstr:exercise.id }}" class="accordion-collapse collapse show">
-                            <div class="accordion-body">
-                                <div>
-                                    {% load filters %}
-                                    {% for i in 0|range:exercise.number_of_set %}
-                                        <h3>Série {{ i|add:1 }}</h3>
-                                        <label>{{ exercise.label_data }}</label>
-                                        <input type="text">
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
+                <div class="card mb-5" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ exercise.name }}</h5>
+                        <a href="#" class="btn btn-primary">Aller à l'exercice</a>
                     </div>
                 </div>
             {% endfor %}
-            <input type="submit">
+            <button type="submit" class="btn btn-primary mb-3">Terminer l'entraînement</button>
         {% endblock %}
     </form>
 </div>
