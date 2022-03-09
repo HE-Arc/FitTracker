@@ -5,6 +5,8 @@ from django.db import models
 class Program(models.Model):
     name = models.CharField(max_length=50)
     discipline = models.ForeignKey('Discipline', on_delete=models.CASCADE)
+    def __str__(self):
+        return self.name
 
 class User_Program(models.Model):
     user = models.ManyToManyField(settings.AUTH_USER_MODEL)
@@ -20,11 +22,13 @@ class Training(models.Model):
 class Exercise(models.Model):
     name = models.CharField(max_length=50)
     program = models.ForeignKey('Program', on_delete=models.CASCADE)
-    rank_in_program = models.IntegerField
-    number_of_set = models.IntegerField
+    rank_in_program = models.IntegerField(default=0)
+    number_of_set = models.IntegerField(default=0)
     label_data = models.CharField(max_length=50)
     indication = models.CharField(max_length=50)
     category = models.ForeignKey('Category', on_delete=models.CASCADE)
+    def __str__(self):
+        return self.name
 
 class Exercise_Program(models.Model):
     exercise = models.ManyToManyField('Exercise')
@@ -38,5 +42,5 @@ class Category(models.Model):
 class Data(models.Model):
     training = models.ForeignKey('Training', on_delete=models.CASCADE)
     exercise = models.ForeignKey('Exercise', on_delete=models.CASCADE)
-    rank_in_set = models.IntegerField
+    rank_in_set = models.IntegerField(default=0)
     value = models.IntegerField
