@@ -1,6 +1,20 @@
+
+<html>
+  <head>
+    <style>
+     body {
+   
+      }
+
+    </style>
+  </head>
+  <body>
+    <h1>Créer un exercice</h1>
+
+    <form action="{% url 'generator' %}" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Créer un exercice">
+        </form>
+  </body>
 </html>
-<form action="{% url 'index' %}" method="post">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Créer un exercice">
-    </form>

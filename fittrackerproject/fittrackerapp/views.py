@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.template import loader
 from django.shortcuts import render
 from .models import Category
+from .forms import GeneratorForm
 
 def index(request):
     return HttpResponse("Hello, world. You're logged  in.")
@@ -47,5 +48,8 @@ def logout_view(request):
 
 #@login_required(login_url="login")
 def generator_view(request):
-    category = Category.objects
-    return render(request,"generator.html",{'category': category})
+    if request.method == "POST":
+        form = GeneratorForm(data=request.POST) 
+    else:
+        form = GeneratorForm()
+    return render(request,"generator.html",{'form':form})

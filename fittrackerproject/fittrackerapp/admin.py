@@ -1,5 +1,8 @@
 from django.contrib import admin
 
-from .models import Category
+from .models import Category, Exercise, Program
 
 admin.site.register(Category)
+admin.site.register(Exercise)
+admin.site.register(Program)
+
