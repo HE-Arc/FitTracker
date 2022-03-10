@@ -5,6 +5,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from fittrackerapp.models import *
+from fittrackerapp.forms import *
 
 def index(request):
     return HttpResponse("Hello, world. You're logged  in.")
@@ -61,5 +62,13 @@ def training_index_view(request, id):
     return render(request,"training_index.html", {'exercises_list': exercises_list})
 
 def exercise_view(request, id):
-    exercise = Exercise.objects.get(exercise_program__exercise_id=id)
-    return render(request,"exercise.html", {'exercise': exercise})
+    if request.method == "POST":
+        form = ExerciseForm(request.POST) # Pass information from form with request.POST
+        if form.is_valid():
+            exercise = form.save() # Log the user in
+            #login(request, user)
+            #return redirect('index')
+    else:
+        form = ExerciseForm() # Create a new instance of this form
+        exercise = Exercise.objects.get(exercise_program__exercise_id=id)
+    return render(request,"exercise.html", {'exercise': exercise, 'form': form})
