@@ -6,8 +6,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.template import loader
 from django.shortcuts import render
-from .models import Category
-from .forms import GeneratorForm
+from .forms import ExerciceForm,ProgramForm
 
 def index(request):
     return HttpResponse("Hello, world. You're logged  in.")
@@ -47,9 +46,20 @@ def logout_view(request):
         return redirect('index')
 
 #@login_required(login_url="login")
-def generator_view(request):
+def exercice_view(request):
     if request.method == "POST":
-        form = GeneratorForm(data=request.POST) 
+        form = ExerciceForm(data=request.POST)
+        form.save() 
+        return redirect('exercice') 
     else:
-        form = GeneratorForm()
-    return render(request,"generator.html",{'form':form})
+        form = ExerciceForm()
+    return render(request,"exercice.html",{'form':form})
+
+def program_view(request):
+    if request.method == "POST":
+        form = ProgramForm(data=request.POST) 
+        form.save() 
+        return redirect('program')
+    else:
+        form = ProgramForm()
+    return render(request,"program.html",{'form':form})

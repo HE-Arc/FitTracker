@@ -14,6 +14,8 @@ class User_Program(models.Model):
 
 class Discipline(models.Model):
     name = models.CharField(max_length=50)
+    def __str__(self):
+        return self.name
 
 class Training(models.Model):
     date = models.DateTimeField(auto_now_add=True)
