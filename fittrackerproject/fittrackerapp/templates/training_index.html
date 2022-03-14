@@ -1,18 +1,20 @@
 {% extends 'base_layout.html' %}
 {% block title %}Sommaire programme{% endblock %}
 {% block content %}
-    <h1>Exercises du programme</h1>
-    <div>
-        <form>
-            {% for exercise in exercises_list %}
-                <div class="card mb-5" style="width: 18rem;">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ exercise.name }}</h5>
-                        <a href="#" class="btn btn-primary">Aller à l'exercice</a>
+    <div class="container ml-20">
+        <h1 class="text-5xl pt-10">Exercises du programme</h1>
+        <div>
+            <form>
+                {% for exercise in exercises_list %}
+                    <div class="border-2 m-2" style="width: 18rem;">
+                        <div class="flex">
+                            <h5 class="">{{ exercise.name }}</h5>
+                            <a href="{% url 'exercise' exercise.id %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold px-2 rounded">Aller à l'exercice</a>
+                        </div>
                     </div>
-                </div>
-            {% endfor %}
-            <button type="submit" class="btn btn-primary mb-3">Terminer l'entraînement</button>
-        {% endblock %}
-    </form>
+                {% endfor %}
+                <button type="submit" class="mb-3 bg-blue-300 rounder-full">Terminer l'entraînement</button>
+            {% endblock %}
+        </form>
+    </div>
 </div>
