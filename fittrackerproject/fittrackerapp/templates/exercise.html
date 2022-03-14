@@ -1,9 +1,14 @@
 {% extends 'base_layout.html' %}
 {% block content %}
     <div>
+        <h1>{{ exercise.name }}</h1>
         <form action="" method="post">
             {% csrf_token %}
-            {{ form }}
+            {% for field in form %}
+            <h2>Série {{forloop.counter}}</h2>
+            {{ field }}
+            {% endfor %}
+            <input type="Submit" class="btn btn-primary"/>
         </form>
     </div>
 {% endblock %}
