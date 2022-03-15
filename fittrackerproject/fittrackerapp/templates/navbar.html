@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    {% load static %}
+    <head>
+        <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
+    </head>
+    <body>
+        <div class="sidebar-container">
+            <div class="sidebar-logo">
+              FitTracker
+            </div>
+            <ul class="sidebar-navigation">
+              <li class="header">Navigation</li>
+              <li>
+                <a href="index">
+                  <i class="fa fa-home" aria-hidden="true"></i> Homepage
+                </a>
+              </li>
+              <li>
+                <a href="index">
+                  <i class="fa fa-tachometer" aria-hidden="true"></i> Dashboard
+                </a>
+              </li>
+              <li class="header">Profil</li>
+              <li>
+                <a href="logout">
+                  <i class="fa fa-users" aria-hidden="true"></i> Déconnection
+                </a>
+              </li>
+              <li>
+                <a href="register">
+                  <i class="fa fa-cog" aria-hidden="true"></i> Inscription
+                </a>
+              </li>
+            </ul>
+          </div>
+          
+          <div class="content-container">
+          
+            <div class="container-fluid">
+          
+                {% block content %}{% endblock %}
+              </div>
+          
+            </div>
+          </div>
+    </body>
+  </html>

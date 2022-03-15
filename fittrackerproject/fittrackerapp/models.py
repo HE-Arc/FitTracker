@@ -2,47 +2,50 @@ from django.conf import settings
 from django.db import models
 
 
-class Program(models.Model):
-    name = models.CharField(max_length=50)
-    discipline = models.ForeignKey('Discipline', on_delete=models.CASCADE)
-    def __str__(self):
-        return self.name
-
-class User_Program(models.Model):
-    user = models.ManyToManyField(settings.AUTH_USER_MODEL)
-    program = models.ManyToManyField(Program)
-
 class Discipline(models.Model):
     name = models.CharField(max_length=50)
     def __str__(self):
         return self.name
 
-class Training(models.Model):
-    date = models.DateTimeField(auto_now_add=True)
-    program = models.ForeignKey('Program', on_delete=models.CASCADE)
+class Category(models.Model):
+    name = models.CharField(max_length=50)
+    def __str__(self):
+        return self.name
+
+
+class Program(models.Model):
+    name = models.CharField(max_length=50)
+    owner = models.ManyToManyField(settings.AUTH_USER_MODEL)
+    discipline = models.ForeignKey('Discipline', on_delete=models.CASCADE)
+    def __str__(self):
+        return self.name
+
 
 class Exercise(models.Model):
     name = models.CharField(max_length=50)
-    program = models.ForeignKey('Program', on_delete=models.CASCADE)
-    rank_in_program = models.IntegerField(default=0)
-    number_of_set = models.IntegerField(default=0)
+    rank_in_program = models.IntegerField()
+    number_of_set = models.IntegerField()
     label_data = models.CharField(max_length=50)
     indication = models.CharField(max_length=50)
     category = models.ForeignKey('Category', on_delete=models.CASCADE)
+    program = models.ManyToManyField(Program, through='Exercise_Program')
     def __str__(self):
         return self.name
+
 
 class Exercise_Program(models.Model):
-    exercise = models.ManyToManyField('Exercise')
-    program = models.ManyToManyField('Program')
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
+    program = models.ForeignKey(Program, on_delete=models.CASCADE)
 
-class Category(models.Model):
-    name = models.CharField(max_length=200)
-    def __str__(self):
-        return self.name
+
+class Training(models.Model):
+    date = models.DateTimeField(auto_now_add=True)
+    program = models.ForeignKey('Program', on_delete=models.CASCADE)
+    validated = models.BooleanField(default=False)
+
 
 class Data(models.Model):
     training = models.ForeignKey('Training', on_delete=models.CASCADE)
     exercise = models.ForeignKey('Exercise', on_delete=models.CASCADE)
-    rank_in_set = models.IntegerField(default=0)
-    value = models.IntegerField
+    rank_in_set = models.IntegerField()
+    value = models.IntegerField()

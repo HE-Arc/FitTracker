@@ -1,29 +1,41 @@
 from dataclasses import field
 from pyexpat import model
-from django.forms import ModelForm
+from django import forms
 from .models import Exercise,Program
 
-class ExerciceForm(ModelForm):
+class ExerciceForm(forms.ModelForm):  
     class Meta:
         model=Exercise
-        fields=['name','category','number_of_set','rank_in_program','label_data','indication','program',]
+        fields=['name','category','number_of_set','label_data','indication','program',]
         labels = {
         'name': 'Nom',
         'category': 'Catégorie',
         'number_of_set': 'Nombre de série',
-        'rank_in_program': 'Nombre de répétitions',
-        'label_data': 'Label_data',
+        'label_data': 'Etiquette',
         'indication': 'Indication',
         'program': 'Programme',
         }
+        widgets={
+           'name': forms.TextInput(attrs={'class':'form-control',}),
+           'category': forms.Select(attrs={'class':'form-control',}),
+           'number_of_set': forms.NumberInput(attrs={'class':'form-control',}),
+           'label_data': forms.TextInput(attrs={'class':'form-control',}),
+           'indication': forms.TextInput(attrs={'class':'form-control',}),
+           'program': forms.Select(attrs={'class':'form-control',}),
+        }
         
         
-class ProgramForm(ModelForm):
+        
+class ProgramForm(forms.ModelForm):
     class Meta:
         model=Program
         fields=['name','discipline']
         labels = {
         'name': 'Nom',
         'discipline': 'Discipline',
+        }
+        widgets={
+           'name': forms.TextInput(attrs={'class':'form-control',}),
+           'discipline': forms.Select(attrs={'class':'form-control',}),
         }
         

@@ -1,20 +1,21 @@
-
+{% extends 'navbar.html' %}
+{% block content %}
 <html>
+    {% load static %}
     <head>
-      <style>
-       body {
-     
-        }
-  
-      </style>
+        <link rel="stylesheet" type="text/css" href="{% static '/css/base.css' %}">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
     </head>
     <body>
-      <h1>Créer un programme</h1>
-  
-      <form action="{% url 'program' %}" method="post">
-          {% csrf_token %}
-          {{ form.as_p }}
-          <input type="submit" value="Créer un programme">
-          </form>
-    </body>
+        <h1>Créer un programme</h1><br>
+          <div class="form-group">
+            <form action="{% url 'program' %}" method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Créer un programme</button>
+            </form>
+          
+      </body>
   </html>
+  {%  endblock %}

@@ -46,15 +46,17 @@ def logout_view(request):
         return redirect('index')
 
 #@login_required(login_url="login")
-def exercice_view(request):
+def create_exercice_view(request):
     if request.method == "POST":
         form = ExerciceForm(data=request.POST)
+        #quelle est le rank le plus elever et ajouter 1
         form.save() 
         return redirect('exercice') 
     else:
         form = ExerciceForm()
     return render(request,"exercice.html",{'form':form})
 
+#@login_required(login_url="login")
 def program_view(request):
     if request.method == "POST":
         form = ProgramForm(data=request.POST) 
