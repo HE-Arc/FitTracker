@@ -67,7 +67,6 @@ def dashboard_view(request):
 @login_required(login_url="login")
 def training_index_view(request, id):
     exercises_list = Exercise.objects.filter(exercise_program__program_id=id)
-    list_exercise = request.session['']
     training = Training(program_id=1)
     training.save()
     id = training.id
