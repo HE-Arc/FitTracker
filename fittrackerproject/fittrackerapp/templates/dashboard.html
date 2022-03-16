@@ -13,10 +13,21 @@
         <div class="grid border-4 border-black mt-10 bg-red-200">
             <h2 class="text-3xl my-10">Mes programmes</h2>
             <div class="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-                <div>
+                <div class="border">
                     {% for program in program_list %}
                         <div class="my-5">
                             <a href="{% url 'training' program.id %}">{{ program.name }}</a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <h2 class="text-3xl my-10">Entraînements en cours</h2>
+            <div class="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
+                <div>
+                    {% for training in training_list %}
+                        <div class="my-5 border border-black">
+                            <a href="{% url 'dashboard'  %}">{{ training.date }}</a>
                         </div>
                     {% endfor %}
                 </div>

@@ -15,9 +15,11 @@ class ExerciseForm(forms.Form):
     def save(self, exercise_id, current_training):
         data = self.cleaned_data
 
-        for index, value in enumerate(data):
-            saving = Data(rank_in_set=data['input'+str(index)], value=value, exercise_id=exercise_id, training_id=current_training)
+        counter = 0
+        for k,v in data.items():
+            saving = Data(rank_in_set=counter, value=v, exercise_id=exercise_id, training_id=current_training)
             saving.save()
+            counter += 1
 
 
 
