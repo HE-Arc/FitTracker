@@ -7,13 +7,8 @@ from django.contrib.auth.decorators import login_required
 from fittrackerapp.models import *
 from fittrackerapp.forms import *
 
-@login_required(login_url="login")
-def index(request):
-    return HttpResponse("Hello, world. You're logged  in.")
-
 def home(request):
     return render(request,"home.html")
-
 
 def register_view(request):
     if request.method == "POST":
@@ -25,7 +20,6 @@ def register_view(request):
     else:
         form = UserCreationForm() # Create a new instance of this form
     return render(request,"register.html", {'form':form}) # Send the UserCreationForm to render
-
 
 def login_view(request):
     if request.method == "POST":
@@ -45,24 +39,19 @@ def login_view(request):
 def logout_view(request):
     if request.method == "POST":
         logout(request)
-        return redirect('index')
+        return redirect('/')
 
 
 @login_required(login_url="login")
 def generator_view(request):
     return HttpResponse("Generator page")
 
-
-@login_required(login_url="login")
-def training_view(request):
-    form = 0
-    return render(request,"training.html", {'form':form})
-
-
 @login_required(login_url="login")
 def dashboard_view(request):
-    program_list = Program.objects.all()
-    return render(request,"dashboard.html", {'program_list':program_list})
+    program_list = Program.objects.filter(owner=request.user.id)
+    training_list = Training.objects.all()
+
+    return render(request,"dashboard.html", {'program_list':program_list, 'training_list':training_list})
 
 @login_required(login_url="login")
 def training_index_view(request, id):
