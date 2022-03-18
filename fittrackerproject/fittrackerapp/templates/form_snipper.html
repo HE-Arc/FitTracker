@@ -1,8 +1,0 @@
-    {{ exercise.name }}
-    {% load filters %}
-    {% for i in 0|range:exercise.number_of_set %}
-        <h3>Série {{ i|add:1 }}</h3>
-        <label>{{ exercise.label_data }}</label>
-        <input type="text">
-    {% endfor %}
-    <input type="submit">
