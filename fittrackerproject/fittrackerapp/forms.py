@@ -6,19 +6,10 @@ from django import forms
 from .models import Exercise,Program
 from django.contrib.auth.models import User
 
-class CustomModelMultipleChoiceField(forms.ModelMultipleChoiceField):
-    def label_from_instance(self, member):
-        """ Customises the labels for checkboxes"""
-        return "%s" % member.name
-
 class ExerciceForm(forms.ModelForm):
-   
-    def __init__(self, *args, **kwargs):
-
-        self.request = kwargs.pop('request')
+    def __init__(self, user, *args, **kwargs):
         super(ExerciceForm, self).__init__(*args, **kwargs)
-        self.fields['owner'].queryset = Program.objects.filter(
-            user=self.request.user)     
+        self.fields['program'].queryset=Program.objects.filter(owner=user)
              
     class Meta:
         model=Exercise 
@@ -48,10 +39,11 @@ class ExerciceForm(forms.ModelForm):
         data = self.cleaned_data
         saving = Exercise(rank_in_program=rank,name=data['name'],number_of_set=data['number_of_set'],category=data['category'],label_data=data['label_data'],indication=data['indication'])
         saving.save() 
-           
-    program = CustomModelMultipleChoiceField(
+       
+    program = forms.ModelMultipleChoiceField(
         queryset=None,
-        widget=forms.CheckboxSelectMultiple
+        widget=forms.CheckboxSelectMultiple,
+        label='Programme'
     )
         
 class ProgramForm(forms.ModelForm):

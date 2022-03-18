@@ -53,14 +53,13 @@ def logout_view(request):
 def create_exercice_view(request):
     if request.method == "POST":
         form = ExerciceForm(data=request.POST)
-        current_user = request.user.id
         rank=Exercise.objects.aggregate(Max('rank_in_program'))
         rank['rank_in_program__max'] += 1
         if form.is_valid():
             form.save(rank['rank_in_program__max'])
             return redirect('exercice') 
     else:
-        form = ExerciceForm()
+        form = ExerciceForm(request.user.id)
     return render(request,"exercice.html",{'form':form})
 
 #@login_required(login_url="login")
