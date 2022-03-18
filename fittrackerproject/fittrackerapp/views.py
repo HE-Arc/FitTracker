@@ -7,6 +7,10 @@ from django.contrib.auth.decorators import login_required
 from django.template import loader
 from django.shortcuts import render
 from .forms import ExerciceForm,ProgramForm
+from .models import Exercise_Program,Exercise
+from django.conf import settings
+from django.db.models import Max
+from django.contrib.auth.models import User
 
 def index(request):
     return HttpResponse("Hello, world. You're logged  in.")
@@ -49,9 +53,12 @@ def logout_view(request):
 def create_exercice_view(request):
     if request.method == "POST":
         form = ExerciceForm(data=request.POST)
-        #quelle est le rank le plus elever et ajouter 1
-        form.save() 
-        return redirect('exercice') 
+        current_user = request.user.id
+        rank=Exercise.objects.aggregate(Max('rank_in_program'))
+        rank['rank_in_program__max'] += 1
+        if form.is_valid():
+            form.save(rank['rank_in_program__max'])
+            return redirect('exercice') 
     else:
         form = ExerciceForm()
     return render(request,"exercice.html",{'form':form})
