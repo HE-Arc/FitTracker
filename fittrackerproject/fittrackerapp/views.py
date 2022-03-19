@@ -11,6 +11,7 @@ from .models import Exercise_Program,Exercise
 from django.conf import settings
 from django.db.models import Max
 from django.contrib.auth.models import User
+from django.contrib import messages
 
 def index(request):
     return HttpResponse("Hello, world. You're logged  in.")
@@ -49,25 +50,27 @@ def logout_view(request):
         logout(request)
         return redirect('index')
 
-#@login_required(login_url="login")
+@login_required(login_url="login")
 def create_exercice_view(request):
     if request.method == "POST":
-        form = ExerciceForm(data=request.POST)
+        form = ExerciceForm(request.user.id,data=request.POST)
         rank=Exercise.objects.aggregate(Max('rank_in_program'))
-        rank['rank_in_program__max'] += 1
+        rank['rank_in_program__max']
         if form.is_valid():
             form.save(rank['rank_in_program__max'])
-            return redirect('exercice') 
+            messages.success(request, 'L\'exercice a été créer')
+            return redirect('home') 
     else:
         form = ExerciceForm(request.user.id)
     return render(request,"exercice.html",{'form':form})
 
-#@login_required(login_url="login")
+@login_required(login_url="login")
 def program_view(request):
     if request.method == "POST":
         form = ProgramForm(data=request.POST) 
         form.save() 
-        return redirect('program')
+        messages.success(request, 'Le programme a été créer')
+        return redirect('home')
     else:
         form = ProgramForm()
     return render(request,"program.html",{'form':form})

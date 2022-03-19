@@ -36,6 +36,8 @@ class ExerciceForm(forms.ModelForm):
             }
             
     def save(self, rank):
+        if rank is None:
+            rank=1
         data = self.cleaned_data
         saving = Exercise(rank_in_program=rank,name=data['name'],number_of_set=data['number_of_set'],category=data['category'],label_data=data['label_data'],indication=data['indication'])
         saving.save() 
