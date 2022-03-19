@@ -6,9 +6,9 @@ from django import forms
 from .models import Exercise,Program
 from django.contrib.auth.models import User
 
-class ExerciceForm(forms.ModelForm):
+class ExerciseForm(forms.ModelForm):
     def __init__(self, user, *args, **kwargs):
-        super(ExerciceForm, self).__init__(*args, **kwargs)
+        super(ExerciseForm, self).__init__(*args, **kwargs)
         self.fields['program'].queryset=Program.objects.filter(owner=user)
              
     class Meta:
@@ -60,8 +60,4 @@ class ProgramForm(forms.ModelForm):
            'name': forms.TextInput(attrs={'class':'form-control',}),
            'discipline': forms.Select(attrs={'class':'form-control',}),
         }
-        
-    def usess(self, rank):
-        global user
-        user=rank
         

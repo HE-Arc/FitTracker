@@ -3,6 +3,8 @@
     {% load static %}
     <head>
         <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
     </head>
     <body>
         <div class="sidebar-container">
@@ -22,19 +24,23 @@
                 </a>
               </li>
               <li class="header">Profil</li>
+              
+              {% if user.is_authenticated %}
               <li>
                 <a href="logout">
                   <i class="fa fa-users" aria-hidden="true"></i> Déconnection
                 </a>
               </li>
+
+              {% else %}
               <li>
                 <a href="register">
                   <i class="fa fa-cog" aria-hidden="true"></i> Inscription
                 </a>
               </li>
+              {% endif %}
             </ul>
           </div>
-          
           <div class="content-container">
           
             <div class="container-fluid">

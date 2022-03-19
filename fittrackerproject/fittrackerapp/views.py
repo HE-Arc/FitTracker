@@ -6,7 +6,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.template import loader
 from django.shortcuts import render
-from .forms import ExerciceForm,ProgramForm
+from .forms import ExerciseForm,ProgramForm
 from .models import Exercise_Program,Exercise
 from django.conf import settings
 from django.db.models import Max
@@ -51,18 +51,17 @@ def logout_view(request):
         return redirect('index')
 
 @login_required(login_url="login")
-def create_exercice_view(request):
+def create_exercise_view(request):
     if request.method == "POST":
-        form = ExerciceForm(request.user.id,data=request.POST)
-        rank=Exercise.objects.aggregate(Max('rank_in_program'))
-        rank['rank_in_program__max']
+        form = ExerciseForm(request.user.id,data=request.POST)
+        rank=Exercise.objects.aggregate(Max('rank_in_program')).value()[0]
         if form.is_valid():
-            form.save(rank['rank_in_program__max'])
+            form.save(rank)
             messages.success(request, 'L\'exercice a été créer')
             return redirect('home') 
     else:
-        form = ExerciceForm(request.user.id)
-    return render(request,"exercice.html",{'form':form})
+        form = ExerciseForm(request.user.id)
+    return render(request,"exercise.html",{'form':form})
 
 @login_required(login_url="login")
 def program_view(request):
