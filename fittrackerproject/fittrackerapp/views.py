@@ -53,17 +53,34 @@ def logout_view(request):
 @login_required(login_url="login")
 def dashboard_view(request):
     program_list = Program.objects.filter(owner=request.user.id)
-
     return render(request, "dashboard.html", {'program_list': program_list})
 
 
 @login_required(login_url="login")
-def training_view(request, id):
-    exercises_list = Exercise.objects.filter(exercise_program__program_id=id)
-    request.session['program_id'] = id
+def program_view(request, id):
+    if request.method == "POST":
+        Training.objects.filter(
+            id=request.session['training_id']).update(validated=True)
+        del request.session['training_id']
+        redirect('/dashboard')
+    else:
+        exercises_list = Exercise.objects.filter(
+            exercise_program__program_id=id)
+        request.session['program_id'] = id
+
+        if 'training_id' not in request.session:
+            is_done = []
+        else:
+            # TODO si l'exercice n'est pas présent il renvoie None ! Faire en sorte qu'il ne soit pas enregistré !
+            is_done = [Data.objects.filter(training_id=request.session['training_id'],
+                                           exercise_id=exercise.id).first() for exercise in exercises_list]
+            if len(is_done) != 0:
+                is_done = [i.exercise_id for i in is_done]
+
     if 'dashboard' in request.META['HTTP_REFERER']:
         request.session['first'] = 1
-    return render(request, "training_index.html", {'exercises_list': exercises_list})
+
+    return render(request, "training_index.html", {'exercises_list': exercises_list, 'is_done': is_done})
 
 
 @login_required(login_url="login")
@@ -81,7 +98,7 @@ def exercise_view(request, id):
                 request.session['training_id'] = training.id
 
             exercise = form.save(exercise.id, request.session['training_id'])
-        return redirect('/training/' + str(request.session['program_id']))
+        return redirect('/program/' + str(request.session['program_id']))
     else:
         exercise = Exercise.objects.get(exercise_program__exercise_id=id)
         form = ExerciseForm(label=exercise.label_data,
