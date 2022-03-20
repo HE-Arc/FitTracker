@@ -104,7 +104,7 @@ def create_exercise_view(request):
         if form.is_valid():
             form.save(rank['rank_in_program__max'])
             messages.success(request, 'L\'exercice a été créer')
-            return redirect('home')
+            return redirect('dashboard')
     else:
         form = CreateExerciseForm(request.user.id)
     return render(request,"create_exercise.html",{'form':form})
@@ -116,7 +116,7 @@ def create_program_view(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Le programme a été créer')
-            return redirect('home')
+            return redirect('dashboard')
     else:
         form = ProgramForm(request.user)
     return render(request,"program.html",{'form':form})
