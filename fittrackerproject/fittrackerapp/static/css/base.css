@@ -8,7 +8,9 @@
     background: #1a1a1a;
     color: #fff;
   }
-
+  .btn:not(:disabled):not(.disabled) {
+    cursor: pointer;
+}
   .content-container {
     padding-top: 20px;
   }

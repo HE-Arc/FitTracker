@@ -1,14 +1,7 @@
-<html>
-  <head>
-    <style>
-     body {
-      color: pink;
-      text-align: center;
-      }
+{% extends 'base_layout.html' %}
+{% block title %}Home{% endblock %}
 
-    </style>
-  </head>
-  <body>
+{% block content %}
     <h1>Hello</h1>
 
     <p> Welcome to the Our site</p>
@@ -19,5 +12,3 @@
 
       <a href="{% url 'login' %}">Login</a>
     </div>
-  </body>
-</html>
