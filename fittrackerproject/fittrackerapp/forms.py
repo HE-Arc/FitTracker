@@ -6,19 +6,25 @@ from django import forms
 from .models import Exercise,Program
 from django.contrib.auth.models import User
 
+<<<<<<< HEAD
 class CreateExerciseForm(forms.ModelForm):
     def __init__(self, user, *args, **kwargs):
         super(CreateExerciseForm, self).__init__(*args, **kwargs)
+=======
+class ExerciseGeneratorForm(forms.ModelForm):
+    def __init__(self, user, *args, **kwargs):
+        super(ExerciseGeneratorForm, self).__init__(*args, **kwargs)
+>>>>>>> fd625555cebbcc9934f6d310aec07fa5adfba3d5
         self.fields['program'].queryset=Program.objects.filter(owner=user)
-             
+
     class Meta:
-        model=Exercise 
+        model=Exercise
         fields=['name','category','number_of_set','label_data','indication']
         name=forms.CharField
         number_of_set=forms.DecimalField
         label_data=forms.CharField
         indication=forms.CharField
-        
+
         widgets={
            'name': forms.TextInput(attrs={'class':'form-control',}),
            'category': forms.Select(attrs={'class':'form-control',}),
@@ -34,20 +40,20 @@ class CreateExerciseForm(forms.ModelForm):
             'label_data': 'Etiquette',
             'indication': 'Indication',
             }
-            
+
     def save(self, rank):
         if rank is None:
             rank=1
         data = self.cleaned_data
         saving = Exercise(rank_in_program=rank,name=data['name'],number_of_set=data['number_of_set'],category=data['category'],label_data=data['label_data'],indication=data['indication'])
-        saving.save() 
-       
+        saving.save()
+
     program = forms.ModelMultipleChoiceField(
         queryset=None,
         widget=forms.CheckboxSelectMultiple,
         label='Programme'
     )
-        
+
 class ProgramForm(forms.ModelForm):
     class Meta:
         model=Program
@@ -60,4 +66,3 @@ class ProgramForm(forms.ModelForm):
            'name': forms.TextInput(attrs={'class':'form-control',}),
            'discipline': forms.Select(attrs={'class':'form-control',}),
         }
-        
