@@ -6,15 +6,9 @@ from django import forms
 from .models import Exercise,Program
 from django.contrib.auth.models import User
 
-<<<<<<< HEAD
 class CreateExerciseForm(forms.ModelForm):
     def __init__(self, user, *args, **kwargs):
         super(CreateExerciseForm, self).__init__(*args, **kwargs)
-=======
-class ExerciseGeneratorForm(forms.ModelForm):
-    def __init__(self, user, *args, **kwargs):
-        super(ExerciseGeneratorForm, self).__init__(*args, **kwargs)
->>>>>>> fd625555cebbcc9934f6d310aec07fa5adfba3d5
         self.fields['program'].queryset=Program.objects.filter(owner=user)
 
     class Meta:
