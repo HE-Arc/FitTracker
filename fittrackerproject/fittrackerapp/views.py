@@ -54,9 +54,10 @@ def logout_view(request):
 def create_exercise_view(request):
     if request.method == "POST":
         form = CreateExerciseForm(request.user.id,data=request.POST)
-        rank=Exercise.objects.aggregate(Max('rank_in_program')).value()[0]
+        rank=Exercise.objects.aggregate(Max('rank_in_program'))
+        print(rank)
         if form.is_valid():
-            form.save(rank)
+            form.save(rank['rank_in_program__max'])
             messages.success(request, 'L\'exercice a été créer')
             return redirect('home')
     else:
@@ -66,10 +67,11 @@ def create_exercise_view(request):
 @login_required(login_url="login")
 def create_program_view(request):
     if request.method == "POST":
-        form = ProgramForm(data=request.POST)
-        form.save()
-        messages.success(request, 'Le programme a été créer')
-        return redirect('home')
+        form = ProgramForm(request.user,data=request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Le programme a été créer')
+            return redirect('home')
     else:
-        form = ProgramForm()
+        form = ProgramForm(request.user)
     return render(request,"program.html",{'form':form})

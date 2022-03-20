@@ -2,9 +2,10 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-    <h1>Hello</h1>
 
-    <p> Welcome to the Our site</p>
+<div class="container ml-20">
+  <h1 class="text-5xl text-left pt-10">Home</h1></br>
+  <div class="form-group">
     {%include 'message.html'%}
     <div>
       
@@ -12,3 +13,7 @@
 
       <a href="{% url 'login' %}">Login</a>
     </div>
+  </div>
+</div>
+  {%  endblock %}
+

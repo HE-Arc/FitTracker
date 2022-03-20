@@ -7,9 +7,9 @@
         <form action="{% url 'exercise' %}" method="post">
             {% csrf_token %}
             {{ form.as_p }}
-
-        </br> <button type="button" class="btn btn-primary">Créer un exercice</button>
+        </br> <button type="submit" class="btn btn-primary">Créer un exercice</button>
         </form>
       </div>
+</div>
 </div>
 {%  endblock %} 
