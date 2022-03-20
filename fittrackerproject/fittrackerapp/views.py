@@ -55,7 +55,6 @@ def create_exercise_view(request):
     if request.method == "POST":
         form = CreateExerciseForm(request.user.id,data=request.POST)
         rank=Exercise.objects.aggregate(Max('rank_in_program'))
-        print(rank)
         if form.is_valid():
             form.save(rank['rank_in_program__max'])
             messages.success(request, 'L\'exercice a été créer')
