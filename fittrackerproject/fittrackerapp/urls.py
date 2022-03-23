@@ -13,4 +13,7 @@ urlpatterns = [
     path('dashboard', views.dashboard_view, name = "dashboard"),
     path('program/<int:id>', views.program_view, name = "training"),
     path('exercise/<int:id>', views.exercise_view, name = "exercise"),
+    path('exercise', views.create_exercise_view, name = "exercise"),
+    path('program', views.create_program_view, name = "program"),
+
 ]

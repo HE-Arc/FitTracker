@@ -1,0 +1,14 @@
+{% extends 'base_layout.html' %}
+{% block title %}Programme{% endblock %}
+{% block content %}
+<div class="container ml-20">
+    <h1 class="text-5xl text-left pt-10">Créer un programme</h1></br>
+    <div class="form-group">
+            <form action="{% url 'program' %}" method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+            </br> <button type="submit" class="btn btn-primary">Créer un programme</button>
+            </form>
+    </div>
+</div>
+  {%  endblock %}

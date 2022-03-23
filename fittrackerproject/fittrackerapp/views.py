@@ -1,12 +1,20 @@
 import re
 from django.shortcuts import render, redirect
-
 from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from fittrackerapp.models import *
 from fittrackerapp.forms import *
+from django.template import loader
+from django.shortcuts import render
+from .forms import CreateExerciseForm,ProgramForm
+from .models import Exercise_Program,Exercise
+from django.conf import settings
+from django.db.models import Max
+from django.contrib.auth.models import User
+from django.contrib import messages
+
 
 
 def home(request):
@@ -106,3 +114,30 @@ def exercise_view(request, id):
         form = ExerciseForm(label=exercise.label_data,
                             number_of_set=exercise.number_of_set)
         return render(request, "exercise.html", {'exercise': exercise, 'form': form})
+    
+@login_required(login_url="login")    
+def create_exercise_view(request):
+    if request.method == "POST":
+        form = CreateExerciseForm(request.user.id,data=request.POST)
+        rank=Exercise.objects.aggregate(Max('rank_in_program'))
+        if form.is_valid():
+            form.save(rank['rank_in_program__max'])
+            messages.success(request, 'L\'exercice a été créer')
+            return redirect('dashboard')
+    else:
+        form = CreateExerciseForm(request.user.id)
+    return render(request,"create_exercise.html",{'form':form})
+
+@login_required(login_url="login")
+def create_program_view(request):
+    if request.method == "POST":
+        form = ProgramForm(data=request.POST)   
+        if form.is_valid():
+            form.save()
+            form.instance.owner.add(request.user.id)
+            messages.success(request, 'Le programme a été créer')
+            return redirect('dashboard')
+    else:
+        form = ProgramForm()
+    return render(request,"program.html",{'form':form})
+

@@ -23,7 +23,7 @@ class Program(models.Model):
 
 class Exercise(models.Model):
     name = models.CharField(max_length=50)
-    rank_in_program = models.IntegerField()
+    rank_in_program = models.IntegerField(default=0)
     number_of_set = models.IntegerField()
     label_data = models.CharField(max_length=50)
     indication = models.CharField(max_length=50)
