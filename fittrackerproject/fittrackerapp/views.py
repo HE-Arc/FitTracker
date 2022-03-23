@@ -1,6 +1,6 @@
 import re
 from django.shortcuts import render, redirect
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
@@ -61,17 +61,32 @@ def logout_view(request):
 @login_required(login_url="login")
 def dashboard_view(request):
     program_list = Program.objects.filter(owner=request.user.id)
-
     return render(request, "dashboard.html", {'program_list': program_list})
 
 
 @login_required(login_url="login")
-def training_view(request, id):
-    exercises_list = Exercise.objects.filter(exercise_program__program_id=id)
-    request.session['program_id'] = id
-    if 'dashboard' in request.META['HTTP_REFERER']:
-        request.session['first'] = 1
-    return render(request, "training_index.html", {'exercises_list': exercises_list})
+def program_view(request, id):
+    if request.method == "POST":
+        Training.objects.filter(
+            id=request.session['training_id']).update(validated=True)
+        del request.session['training_id']
+        return redirect('dashboard')
+    else:
+        exercises_list = Exercise.objects.filter(exercise_program__program_id=id)
+        request.session['program_id'] = id
+
+        if 'training_id' not in request.session:
+            is_done = []
+        else:
+            is_done = [Data.objects.filter(training_id=request.session['training_id'], exercise_id=exercise.id).first()
+                       for exercise in exercises_list]
+            if len(is_done) != 0:
+                is_done = [i.exercise_id for i in is_done if i is not None]
+
+        if 'dashboard' in request.META['HTTP_REFERER']:
+            request.session['first'] = 1
+
+        return render(request, "training_index.html", {'exercises_list': exercises_list, 'is_done': is_done})
 
 
 @login_required(login_url="login")
@@ -89,8 +104,12 @@ def exercise_view(request, id):
                 request.session['training_id'] = training.id
 
             exercise = form.save(exercise.id, request.session['training_id'])
-        return redirect('/training/' + str(request.session['program_id']))
+        return redirect('/program/' + str(request.session['program_id']))
     else:
+        if 'training_id' in request.session:
+            already_done = Data.objects.filter(training_id=request.session['training_id'], exercise_id=id).first()
+            if already_done != None:
+                return HttpResponseForbidden()
         exercise = Exercise.objects.get(exercise_program__exercise_id=id)
         form = ExerciseForm(label=exercise.label_data,
                             number_of_set=exercise.number_of_set)
