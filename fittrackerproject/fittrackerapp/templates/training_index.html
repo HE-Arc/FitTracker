@@ -12,10 +12,8 @@
                         <div class="flex">
                             <h5 class="">{{ exercise.name }}</h5>
                             {% if exercise.id in is_done %}
-
-                                <a class="bg-gray-500 hover:bg-blue-700 text-white font-bold px-10 rounded btn">Aller à l'exercice</a>
+                                <a class="bg-gray-500 text-white font-bold px-10 rounded btn">Aller à l'exercice</a>
                             {% else %}
-                                {{ is_done }}
                                 <a href="{% url 'exercise' exercise.id %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold px-10 rounded btn">Aller à l'exercice</a>
                             {% endif %}
                         </div>
