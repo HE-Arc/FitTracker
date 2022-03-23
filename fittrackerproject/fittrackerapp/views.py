@@ -112,12 +112,13 @@ def create_exercise_view(request):
 @login_required(login_url="login")
 def create_program_view(request):
     if request.method == "POST":
-        form = ProgramForm(request.user,data=request.POST)
+        form = ProgramForm(data=request.POST)   
         if form.is_valid():
             form.save()
+            form.instance.owner.add(request.user.id)
             messages.success(request, 'Le programme a été créer')
             return redirect('dashboard')
     else:
-        form = ProgramForm(request.user)
+        form = ProgramForm()
     return render(request,"program.html",{'form':form})
 

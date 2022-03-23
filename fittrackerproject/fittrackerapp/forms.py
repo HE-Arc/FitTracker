@@ -71,23 +71,18 @@ class CreateExerciseForm(forms.ModelForm):
     )
 
 class ProgramForm(forms.ModelForm):
-    def __init__(self, user, *args, **kwargs):
-        super(ProgramForm, self).__init__(*args, **kwargs)
-        self.fields['owner'].queryset=User.objects.filter(username=user)
         
     class Meta:
         model=Program
-        fields=['name','discipline','owner']
+        fields=['name','discipline']
         labels = {
         'name': 'Nom',
         'discipline': 'Discipline',
         'owner': 'Utilisateur',
         }
-        
         widgets={
            'name': forms.TextInput(attrs={'class':'form-control',}),
            'discipline': forms.Select(attrs={'class':'form-control',}),
-           'owner': forms.SelectMultiple(attrs={'class':'form-control',}),
         }
-    
+        
 
