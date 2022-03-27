@@ -101,6 +101,9 @@ def create_exercise_view(request):
     if request.method == "POST":
         form = CreateExerciseForm(request.user.id,data=request.POST)
         rank=Exercise.objects.aggregate(Max('rank_in_program'))
+        if rank['rank_in_program__max'] is None :
+            rank['rank_in_program__max']=1
+        
         if form.is_valid():
             form.instance.rank_in_program=rank['rank_in_program__max']+1
             form.save()

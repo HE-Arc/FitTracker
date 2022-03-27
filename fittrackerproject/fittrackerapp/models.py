@@ -28,9 +28,14 @@ class Exercise(models.Model):
     label_data = models.CharField(max_length=50)
     indication = models.CharField(max_length=50)
     category = models.ForeignKey('Category', on_delete=models.CASCADE)
-    program = models.ManyToManyField(Program)
+    program = models.ManyToManyField(Program, through='Exercise_Program')
     def __str__(self):
         return self.name
+
+
+class Exercise_Program(models.Model):
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
+    program = models.ForeignKey(Program, on_delete=models.CASCADE)
 
 
 class Training(models.Model):
