@@ -121,7 +121,8 @@ def create_exercise_view(request):
         form = CreateExerciseForm(request.user.id,data=request.POST)
         rank=Exercise.objects.aggregate(Max('rank_in_program'))
         if form.is_valid():
-            form.save(rank['rank_in_program__max'])
+            form.instance.rank_in_program=rank['rank_in_program__max']+1
+            form.save()
             messages.success(request, 'L\'exercice a été créer')
             return redirect('dashboard')
     else:

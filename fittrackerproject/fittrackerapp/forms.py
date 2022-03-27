@@ -35,7 +35,7 @@ class CreateExerciseForm(forms.ModelForm):
 
     class Meta:
         model=Exercise
-        fields=['name','category','number_of_set','label_data','indication']
+        fields=['name','category','number_of_set','label_data','indication','program']
         name=forms.CharField
         number_of_set=forms.DecimalField
         label_data=forms.CharField
@@ -56,13 +56,6 @@ class CreateExerciseForm(forms.ModelForm):
             'label_data': 'Etiquette',
             'indication': 'Indication',
             }
-
-    def save(self, rank):
-        if rank is None:
-            rank=1
-        data = self.cleaned_data
-        saving = Exercise(rank_in_program=rank,name=data['name'],number_of_set=data['number_of_set'],category=data['category'],label_data=data['label_data'],indication=data['indication'])
-        saving.save()
 
     program = forms.ModelMultipleChoiceField(
         queryset=None,
