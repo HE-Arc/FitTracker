@@ -9,7 +9,7 @@ from fittrackerapp.forms import *
 from django.template import loader
 from django.shortcuts import render
 from .forms import CreateExerciseForm,ProgramForm
-from .models import Exercise_Program,Exercise
+from .models import Exercise
 from django.conf import settings
 from django.db.models import Max
 from django.contrib.auth.models import User
@@ -102,7 +102,8 @@ def create_exercise_view(request):
         form = CreateExerciseForm(request.user.id,data=request.POST)
         rank=Exercise.objects.aggregate(Max('rank_in_program'))
         if form.is_valid():
-            form.save(rank['rank_in_program__max'])
+            form.instance.rank_in_program=rank['rank_in_program__max']+1
+            form.save()
             messages.success(request, 'L\'exercice a été créer')
             return redirect('dashboard')
     else:
