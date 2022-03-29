@@ -125,34 +125,16 @@ def create_program_view(request):
 
 @login_required(login_url="login")
 def library_view(request):
-    # 1. Afficher les programmes publiques
+    # Show public program
     program_list = Program.objects.all().filter(public=True).exclude(owner=request.user.id)
-
-    # TODO 2. Pouvoir ajouter un programme à un utilisateur
 
     if request.method == "POST":
         data = request.POST
         action = data.get('add-program')
-        program = Program.objects.filter(id=action)
-        # user = request.user
-        print(program)
-        program.user.add(id=action)
+        program = Program.objects.filter(id=action).get()
+        user = request.user
+        program.owner.add(user)
+        owner_list = Program.objects.filter(owner=user.id)
 
-        return HttpResponse(program)
-
-        # program.user_id.add(request.user.id)
-        # request.user.program(id=action)
-
-
-    # return HttpResponse(action)
-    # Program_Owner.objects.create(policy=p1, coverage=c2, amount=1)
-
-
-
-
-    return render(request, "library.html", {'program_list': program_list})
-
-    # TODO 3. Si programme déjà présent dans liste de l'utilisateur ne doit pas s'afficher
-
-    # return render(request, "library.html", {'': })
+    return render(request, "library.html", {'program_list': program_list, 'owner_list':owner_list})
 
