@@ -95,8 +95,8 @@ def exercise_view(request, id):
         form = ExerciseForm(label=exercise.label_data,
                             number_of_set=exercise.number_of_set)
         return render(request, "exercise.html", {'exercise': exercise, 'form': form})
-    
-@login_required(login_url="login")    
+
+@login_required(login_url="login")
 def create_exercise_view(request):
     if request.method == "POST":
         form = CreateExerciseForm(request.user.id,data=request.POST)
@@ -112,7 +112,7 @@ def create_exercise_view(request):
 @login_required(login_url="login")
 def create_program_view(request):
     if request.method == "POST":
-        form = ProgramForm(data=request.POST)   
+        form = ProgramForm(data=request.POST)
         if form.is_valid():
             form.save()
             form.instance.owner.add(request.user.id)
@@ -120,5 +120,39 @@ def create_program_view(request):
             return redirect('dashboard')
     else:
         form = ProgramForm()
-    return render(request,"program.html",{'form':form})
+    return render(request,"create_program.html",{'form':form})
+
+
+@login_required(login_url="login")
+def library_view(request):
+    # 1. Afficher les programmes publiques
+    program_list = Program.objects.all().filter(public=True).exclude(owner=request.user.id)
+
+    # TODO 2. Pouvoir ajouter un programme à un utilisateur
+
+    if request.method == "POST":
+        data = request.POST
+        action = data.get('add-program')
+        program = Program.objects.filter(id=action)
+        # user = request.user
+        print(program)
+        program.user.add(id=action)
+
+        return HttpResponse(program)
+
+        # program.user_id.add(request.user.id)
+        # request.user.program(id=action)
+
+
+    # return HttpResponse(action)
+    # Program_Owner.objects.create(policy=p1, coverage=c2, amount=1)
+
+
+
+
+    return render(request, "library.html", {'program_list': program_list})
+
+    # TODO 3. Si programme déjà présent dans liste de l'utilisateur ne doit pas s'afficher
+
+    # return render(request, "library.html", {'': })
 
