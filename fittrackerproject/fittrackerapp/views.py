@@ -96,7 +96,7 @@ def program_view(request, id):
 @login_required(login_url="login")
 def exercise_view(request, id):
     if request.method == "POST":
-        exercise = Exercise.objects.get(exercise_program__exercise_id=id)
+        exercise = Exercise.objects.get(id=id)
         # Pass information from form with request.POST
         form = ExerciseForm(request.POST, label="Poids",
                             number_of_set=exercise.number_of_set)
@@ -114,7 +114,7 @@ def exercise_view(request, id):
             already_done = Data.objects.filter(training_id=request.session['training_id'], exercise_id=id).first()
             if already_done != None:
                 return HttpResponseForbidden()
-        exercise = Exercise.objects.get(exercise_program__exercise_id=id)
+        exercise = Exercise.objects.get(id=id)
         form = ExerciseForm(label=exercise.label_data,
                             number_of_set=exercise.number_of_set)
         return render(request, "exercise.html", {'exercise': exercise, 'form': form})
