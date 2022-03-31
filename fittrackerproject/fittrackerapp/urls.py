@@ -15,5 +15,5 @@ urlpatterns = [
     path('exercise/<int:id>', views.exercise_view, name = "exercise"),
     path('exercise', views.create_exercise_view, name = "exercise"),
     path('program', views.create_program_view, name = "program"),
-
+    path('library', views.library_view, name="library"),
 ]

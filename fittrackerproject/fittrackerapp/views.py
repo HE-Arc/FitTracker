@@ -18,6 +18,8 @@ from django.contrib import messages
 
 
 def home(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
     return render(request, "home.html")
 
 
@@ -44,8 +46,7 @@ def login_view(request):
             login(request, user)
             if 'next' in request.POST:
                 return redirect(request.POST.get('next'))
-        else:
-            return redirect('dashboard')
+        return redirect('dashboard')
     else:
         form = AuthenticationForm()  # Create a new instance of this form
     # Send the UserCreationForm to render
@@ -61,7 +62,10 @@ def logout_view(request):
 @login_required(login_url="login")
 def dashboard_view(request):
     program_list = Program.objects.filter(owner=request.user.id)
-    return render(request, "dashboard.html", {'program_list': program_list})
+    count_training = Training.objects.filter(user_id=request.user.id).count()
+    last_training = Training.objects.filter(user_id=request.user.id).last()
+
+    return render(request, "dashboard.html", {'program_list': program_list, 'count_training': count_training, 'last_training': last_training})
 
 
 @login_required(login_url="login")
@@ -92,13 +96,13 @@ def program_view(request, id):
 @login_required(login_url="login")
 def exercise_view(request, id):
     if request.method == "POST":
-        exercise = Exercise.objects.get(exercise_program__exercise_id=id)
+        exercise = Exercise.objects.get(id=id)
         # Pass information from form with request.POST
         form = ExerciseForm(request.POST, label="Poids",
                             number_of_set=exercise.number_of_set)
         if form.is_valid():
             if request.session['first'] == 1:
-                training = Training(program_id=request.session['program_id'])
+                training = Training(program_id=request.session['program_id'], user_id=request.user.id)
                 training.save()
                 request.session['first'] = 0
                 request.session['training_id'] = training.id
@@ -110,12 +114,12 @@ def exercise_view(request, id):
             already_done = Data.objects.filter(training_id=request.session['training_id'], exercise_id=id).first()
             if already_done != None:
                 return HttpResponseForbidden()
-        exercise = Exercise.objects.get(exercise_program__exercise_id=id)
+        exercise = Exercise.objects.get(id=id)
         form = ExerciseForm(label=exercise.label_data,
                             number_of_set=exercise.number_of_set)
         return render(request, "exercise.html", {'exercise': exercise, 'form': form})
-    
-@login_required(login_url="login")    
+
+@login_required(login_url="login")
 def create_exercise_view(request):
     if request.method == "POST":
         form = CreateExerciseForm(request.user.id,data=request.POST)
@@ -134,7 +138,7 @@ def create_exercise_view(request):
 @login_required(login_url="login")
 def create_program_view(request):
     if request.method == "POST":
-        form = ProgramForm(data=request.POST)   
+        form = ProgramForm(data=request.POST)
         if form.is_valid():
             form.save()
             form.instance.owner.add(request.user.id)
@@ -142,5 +146,21 @@ def create_program_view(request):
             return redirect('dashboard')
     else:
         form = ProgramForm()
-    return render(request,"program.html",{'form':form})
+    return render(request,"create_program.html",{'form':form})
+
+
+@login_required(login_url="login")
+def library_view(request):
+    # Show public program
+    program_list = Program.objects.all().filter(public=True).exclude(owner=request.user.id)
+
+    if request.method == "POST":
+        data = request.POST
+        action = data.get('add-program')
+        program = Program.objects.filter(id=action).get()
+        user = request.user
+        program.owner.add(user)
+        owner_list = Program.objects.filter(owner=user.id)
+
+    return render(request, "library.html", {'program_list': program_list, 'owner_list':owner_list})
 
