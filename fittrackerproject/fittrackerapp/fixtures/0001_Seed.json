@@ -58,7 +58,7 @@
         "pk": 3,
         "fields": {
             "name":"Curl",
-            "rank_in_program":1,
+            "rank_in_program":2,
             "number_of_set":4,
             "label_data":"Poids",
             "indication":"Indication",
@@ -70,7 +70,7 @@
         "pk": 4,
         "fields": {
             "name":"Extension triceps",
-            "rank_in_program":1,
+            "rank_in_program":3,
             "number_of_set":4,
             "label_data":"Poids",
             "indication":"Indication",
