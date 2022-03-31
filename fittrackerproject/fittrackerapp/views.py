@@ -18,6 +18,8 @@ from django.contrib import messages
 
 
 def home(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
     return render(request, "home.html")
 
 
@@ -44,8 +46,7 @@ def login_view(request):
             login(request, user)
             if 'next' in request.POST:
                 return redirect(request.POST.get('next'))
-        else:
-            return redirect('dashboard')
+        return redirect('dashboard')
     else:
         form = AuthenticationForm()  # Create a new instance of this form
     # Send the UserCreationForm to render
@@ -61,8 +62,10 @@ def logout_view(request):
 @login_required(login_url="login")
 def dashboard_view(request):
     program_list = Program.objects.filter(owner=request.user.id)
+    count_training = Training.objects.filter(user_id=request.user.id).count()
+    last_training = Training.objects.filter(user_id=request.user.id).last()
 
-    return render(request, "dashboard.html", {'program_list': program_list})
+    return render(request, "dashboard.html", {'program_list': program_list, 'count_training': count_training, 'last_training': last_training})
 
 
 @login_required(login_url="login")
@@ -83,7 +86,7 @@ def exercise_view(request, id):
                             number_of_set=exercise.number_of_set)
         if form.is_valid():
             if request.session['first'] == 1:
-                training = Training(program_id=request.session['program_id'])
+                training = Training(program_id=request.session['program_id'], user_id=request.user.id)
                 training.save()
                 request.session['first'] = 0
                 request.session['training_id'] = training.id
