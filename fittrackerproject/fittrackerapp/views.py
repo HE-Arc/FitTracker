@@ -34,6 +34,28 @@ def register_view(request):
     # Send the UserCreationForm to render
     return render(request, "register.html", {'form': form})
 
+@login_required(login_url="login")
+def exercise_details_view(request, id):
+    if request.method == "POST":
+        exercises_list = Exercise.objects.filter(exercise_program__program_id=request.session['program_id'])
+        exercise = Exercise.objects.get(exercise_program__exercise_id=id)
+        training = Training.objects.get(program_id=request.session['program_id'])
+        data_list = Data.objects.filter(exercise_id=id)
+        form = ExerciseForm(request.POST, label="Poids", number_of_set=exercise.number_of_set)
+        if form.is_valid():
+            if request.session['first'] == 1:
+                request.session['first'] = 0
+                request.session['training_id'] = training.id
+            exercise = form.save(exercise.id, request.session['training_id'])
+        return redirect('/training_list/' + str(request.session['program_id']))
+    else:
+        exercises_list = Exercise.objects.filter(exercise_program__program_id=request.session['program_id'])
+        exercise = Exercise.objects.get(exercise_program__exercise_id=id)
+        training = Training.objects.get(program_id=request.session['program_id'])
+        data_list = Data.objects.filter(exercise_id=id)
+        form = ExerciseForm(label=exercise.label_data, number_of_set=exercise.number_of_set)
+        return render(request, "exercise_details.html", {'exercise': exercise, 'form': form, 'training': training, 'data_list': data_list, 'exercises_list': exercises_list})
+
 
 def login_view(request):
     if request.method == "POST":
@@ -61,8 +83,9 @@ def logout_view(request):
 @login_required(login_url="login")
 def dashboard_view(request):
     program_list = Program.objects.filter(owner=request.user.id)
+    training_list = Program.objects.filter(owner=request.user.id)
 
-    return render(request, "dashboard.html", {'program_list': program_list})
+    return render(request, "dashboard.html", {'program_list': program_list,'training_list': training_list })
 
 
 @login_required(login_url="login")
@@ -96,6 +119,8 @@ def exercise_view(request, id):
                             number_of_set=exercise.number_of_set)
         return render(request, "exercise.html", {'exercise': exercise, 'form': form})
     
+
+    
 @login_required(login_url="login")    
 def create_exercise_view(request):
     if request.method == "POST":
@@ -124,4 +149,12 @@ def create_program_view(request):
     else:
         form = ProgramForm()
     return render(request,"program.html",{'form':form})
+
+@login_required(login_url="login")
+def training_list_view(request, id):
+    exercises_list = Exercise.objects.filter(exercise_program__program_id=id)
+    request.session['program_id'] = id
+    if 'dashboard' in request.META['HTTP_REFERER']:
+        request.session['first'] = 1
+    return render(request, "training_list.html", {'exercises_list': exercises_list})
 
