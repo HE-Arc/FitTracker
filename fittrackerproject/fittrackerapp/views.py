@@ -1,18 +1,14 @@
-import re
+
 from django.shortcuts import render, redirect
-from django.http import HttpRequest, HttpResponse
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from fittrackerapp.models import *
 from fittrackerapp.forms import *
-from django.template import loader
 from django.shortcuts import render
 from .forms import CreateExerciseForm,ProgramForm
 from .models import Exercise
-from django.conf import settings
 from django.db.models import Max
-from django.contrib.auth.models import User
 from django.contrib import messages
 
 
@@ -43,9 +39,6 @@ def exercise_details_view(request, id):
         data_list = Data.objects.filter(exercise_id=id)
         form = ExerciseForm(request.POST, label="Poids", number_of_set=exercise.number_of_set)
         if form.is_valid():
-            if request.session['first'] == 1:
-                request.session['first'] = 0
-                request.session['training_id'] = training.id
             exercise = form.save(exercise.id, request.session['training_id'])
         return redirect('/training_list/' + str(request.session['program_id']))
     else:
@@ -84,16 +77,12 @@ def logout_view(request):
 def dashboard_view(request):
     program_list = Program.objects.filter(owner=request.user.id)
     training_list = Program.objects.filter(owner=request.user.id)
-
     return render(request, "dashboard.html", {'program_list': program_list,'training_list': training_list })
 
 
 @login_required(login_url="login")
 def training_view(request, id):
     exercises_list = Exercise.objects.filter(exercise_program__program_id=id)
-    request.session['program_id'] = id
-    if 'dashboard' in request.META['HTTP_REFERER']:
-        request.session['first'] = 1
     return render(request, "training_index.html", {'exercises_list': exercises_list})
 
 
@@ -153,8 +142,5 @@ def create_program_view(request):
 @login_required(login_url="login")
 def training_list_view(request, id):
     exercises_list = Exercise.objects.filter(exercise_program__program_id=id)
-    request.session['program_id'] = id
-    if 'dashboard' in request.META['HTTP_REFERER']:
-        request.session['first'] = 1
     return render(request, "training_list.html", {'exercises_list': exercises_list})
 
