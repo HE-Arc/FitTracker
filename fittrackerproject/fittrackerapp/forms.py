@@ -57,7 +57,6 @@ class CreateExerciseForm(forms.ModelForm):
             'indication': 'Indication',
             }
 
-
     program = forms.ModelMultipleChoiceField(
         queryset=None,
         widget=forms.CheckboxSelectMultiple,
@@ -65,18 +64,17 @@ class CreateExerciseForm(forms.ModelForm):
     )
 
 class ProgramForm(forms.ModelForm):
-        
+
     class Meta:
         model=Program
-        fields=['name','discipline']
+        fields=['name','discipline', 'public']
         labels = {
         'name': 'Nom',
         'discipline': 'Discipline',
-        'owner': 'Utilisateur',
+        'public': 'Publique',
         }
         widgets={
            'name': forms.TextInput(attrs={'class':'form-control',}),
            'discipline': forms.Select(attrs={'class':'form-control',}),
+           'public': forms.CheckboxInput(attrs={'class': 'form-check-input', }),
         }
-        
-

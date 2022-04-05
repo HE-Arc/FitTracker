@@ -1,5 +1,6 @@
 
 from django.shortcuts import render, redirect
+from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
@@ -14,6 +15,8 @@ from django.contrib import messages
 
 
 def home(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
     return render(request, "home.html")
 
 
@@ -59,8 +62,7 @@ def login_view(request):
             login(request, user)
             if 'next' in request.POST:
                 return redirect(request.POST.get('next'))
-        else:
-            return redirect('dashboard')
+        return redirect('dashboard')
     else:
         form = AuthenticationForm()  # Create a new instance of this form
     # Send the UserCreationForm to render
@@ -82,41 +84,70 @@ def dashboard_view(request):
 
 @login_required(login_url="login")
 def training_view(request, id):
-    exercises_list = Exercise.objects.filter(exercise_program__program_id=id)
-    return render(request, "training_index.html", {'exercises_list': exercises_list})
+    program_list = Program.objects.filter(owner=request.user.id)
+    count_training = Training.objects.filter(user_id=request.user.id).count()
+    last_training = Training.objects.filter(user_id=request.user.id).last()
+    return render(request, "dashboard.html", {'program_list': program_list, 'count_training': count_training, 'last_training': last_training})
+
+
+@login_required(login_url="login")
+def program_view(request, id):
+    if request.method == "POST":
+        Training.objects.filter(
+            id=request.session['training_id']).update(validated=True)
+        del request.session['training_id']
+        return redirect('dashboard')
+    else:
+        exercises_list = Exercise.objects.filter(exercise_program__program_id=id)
+        request.session['program_id'] = id
+
+        if 'training_id' not in request.session:
+            is_done = []
+        else:
+            is_done = [Data.objects.filter(training_id=request.session['training_id'], exercise_id=exercise.id).first()
+                       for exercise in exercises_list]
+            if len(is_done) != 0:
+                is_done = [i.exercise_id for i in is_done if i is not None]
+
+        if 'dashboard' in request.META['HTTP_REFERER']:
+            request.session['first'] = 1
+
+        return render(request, "training_index.html", {'exercises_list': exercises_list, 'is_done': is_done})
 
 
 @login_required(login_url="login")
 def exercise_view(request, id):
     if request.method == "POST":
-        exercise = Exercise.objects.get(exercise_program__exercise_id=id)
+        exercise = Exercise.objects.get(id=id)
         # Pass information from form with request.POST
         form = ExerciseForm(request.POST, label="Poids",
                             number_of_set=exercise.number_of_set)
         if form.is_valid():
             if request.session['first'] == 1:
-                training = Training(program_id=request.session['program_id'])
+                training = Training(program_id=request.session['program_id'], user_id=request.user.id)
                 training.save()
                 request.session['first'] = 0
                 request.session['training_id'] = training.id
 
             exercise = form.save(exercise.id, request.session['training_id'])
-        return redirect('/training/' + str(request.session['program_id']))
+        return redirect('/program/' + str(request.session['program_id']))
     else:
-        exercise = Exercise.objects.get(exercise_program__exercise_id=id)
+        if 'training_id' in request.session:
+            already_done = Data.objects.filter(training_id=request.session['training_id'], exercise_id=id).first()
+            if already_done != None:
+                return HttpResponseForbidden()
+        exercise = Exercise.objects.get(id=id)
         form = ExerciseForm(label=exercise.label_data,
                             number_of_set=exercise.number_of_set)
         return render(request, "exercise.html", {'exercise': exercise, 'form': form})
-    
 
-    
-@login_required(login_url="login")    
+@login_required(login_url="login")
 def create_exercise_view(request):
     if request.method == "POST":
         form = CreateExerciseForm(request.user.id,data=request.POST)
         rank=Exercise.objects.aggregate(Max('rank_in_program'))
         if rank['rank_in_program__max'] is None :
-            rank['rank_in_program__max']=1       
+            rank['rank_in_program__max']=1
         if form.is_valid():
             form.instance.rank_in_program=rank['rank_in_program__max']+1
             form.save()
@@ -129,7 +160,7 @@ def create_exercise_view(request):
 @login_required(login_url="login")
 def create_program_view(request):
     if request.method == "POST":
-        form = ProgramForm(data=request.POST)   
+        form = ProgramForm(data=request.POST)
         if form.is_valid():
             form.save()
             form.instance.owner.add(request.user.id)
@@ -137,7 +168,23 @@ def create_program_view(request):
             return redirect('dashboard')
     else:
         form = ProgramForm()
-    return render(request,"program.html",{'form':form})
+    return render(request,"create_program.html",{'form':form})
+
+
+@login_required(login_url="login")
+def library_view(request):
+    # Show public program
+    program_list = Program.objects.all().filter(public=True).exclude(owner=request.user.id)
+    user = request.user
+
+    if request.method == "POST":
+        data = request.POST
+        action = data.get('add-program')
+        program = Program.objects.filter(id=action).get()
+        program.owner.add(user)
+    owner_list = Program.objects.filter(owner=user.id)
+
+    return render(request, "library.html", {'program_list': program_list, 'owner_list':owner_list})
 
 @login_required(login_url="login")
 def training_list_view(request, id):
