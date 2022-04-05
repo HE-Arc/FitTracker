@@ -4,18 +4,13 @@
     <div class="container ml-20">
         <h1 class="text-5xl pt-10">Exercises du programme</h1>
         <div>
-            <form method="post" action="">
-                {% csrf_token %}
-
+            <form>
                 {% for exercise in exercises_list %}
                     <div class="border-2 m-2" style="width: 18rem;">
                         <div class="flex">
                             <h5 class="">{{ exercise.name }}</h5>
-                            {% if exercise.id in is_done %}
-                                <a class="bg-gray-500 text-white font-bold px-10 rounded btn">Aller à l'exercice</a>
-                            {% else %}
-                                <a href="{% url 'exercise' exercise.id %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold px-10 rounded btn">Aller à l'exercice</a>
-                            {% endif %}
+                            <a href="{% url 'exercise' exercise.id %}"
+                               class="bg-blue-500 hover:bg-blue-700 text-white font-bold px-2 rounded">Aller à l'exercice</a>
                         </div>
                     </div>
                 {% endfor %}

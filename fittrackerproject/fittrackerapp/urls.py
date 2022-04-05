@@ -11,12 +11,14 @@ urlpatterns = [
     path('login', views.login_view, name = "login"),
     path('logout', views.logout_view, name='logout'),
     path('dashboard', views.dashboard_view, name = "dashboard"),
+<<<<<<< HEAD
+    path('program/<int:id>', views.program_view, name = "training"),
+=======
     path('training/<int:id>', views.training_view, name = "training"),
     path('training_list/<int:id>', views.training_list_view, name = "training_list"),
-    path('program/<int:id>', views.program_view, name = "training"),
+>>>>>>> parent of f9368d6 (Merge branch 'dev' into training)
     path('exercise/<int:id>', views.exercise_view, name = "exercise"),
     path('exercise', views.create_exercise_view, name = "exercise"),
-    path('exercise_details/<int:id>', views.exercise_details_view, name = "exercise_details"),
     path('program', views.create_program_view, name = "program"),
-    path('library', views.library_view, name="library"),
+
 ]
