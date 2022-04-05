@@ -22,12 +22,12 @@
                 </div>
             </div>
 
-            <h2 class="text-3xl my-10">Entraînements en cours</h2>
+            <h2 class="text-3xl my-10">Mes entraînements</h2>
             <div class="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
                 <div>
                     {% for training in training_list %}
                         <div class="my-5 border border-black">
-                            <a href="{% url 'dashboard'  %}">{{ training.date }}</a>
+                            <a href="{% url 'training_list' training.id %}">{{ training.name }}</a>
                         </div>
                     {% endfor %}
                 </div>
