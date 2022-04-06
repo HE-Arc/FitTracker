@@ -60,7 +60,6 @@ def logout_view(request):
 @login_required(login_url="login")
 def dashboard_view(request):
     program_list = Program.objects.filter(owner=request.user.id)
-<<<<<<< HEAD
     count_training = Training.objects.filter(user_id=request.user.id).count()
     last_training = Training.objects.filter(user_id=request.user.id).last()
 
@@ -90,16 +89,6 @@ def program_view(request, id):
             request.session['first'] = 1
 
         return render(request, "training_index.html", {'exercises_list': exercises_list, 'is_done': is_done})
-=======
-    training_list = Program.objects.filter(owner=request.user.id)
-    return render(request, "dashboard.html", {'program_list': program_list,'training_list': training_list })
-
-
-@login_required(login_url="login")
-def training_view(request, id):
-    exercises_list = Exercise.objects.filter(exercise_program__program_id=id)
-    return render(request, "training_index.html", {'exercises_list': exercises_list})
->>>>>>> parent of f9368d6 (Merge branch 'dev' into training)
 
 
 @login_required(login_url="login")
@@ -123,16 +112,16 @@ def exercise_view(request, id):
         form = ExerciseForm(label=exercise.label_data,
                             number_of_set=exercise.number_of_set)
         return render(request, "exercise.html", {'exercise': exercise, 'form': form})
-    
 
-    
-@login_required(login_url="login")    
+
+
+@login_required(login_url="login")
 def create_exercise_view(request):
     if request.method == "POST":
         form = CreateExerciseForm(request.user.id,data=request.POST)
         rank=Exercise.objects.aggregate(Max('rank_in_program'))
         if rank['rank_in_program__max'] is None :
-            rank['rank_in_program__max']=1       
+            rank['rank_in_program__max']=1
         if form.is_valid():
             form.instance.rank_in_program=rank['rank_in_program__max']+1
             form.save()
@@ -145,7 +134,7 @@ def create_exercise_view(request):
 @login_required(login_url="login")
 def create_program_view(request):
     if request.method == "POST":
-        form = ProgramForm(data=request.POST)   
+        form = ProgramForm(data=request.POST)
         if form.is_valid():
             form.save()
             form.instance.owner.add(request.user.id)
