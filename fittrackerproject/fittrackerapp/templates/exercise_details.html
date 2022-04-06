@@ -9,7 +9,7 @@
                 <form>
                     {% for exercise in exercises_list %}
                     <div class="list-group" style="width: 30rem;">
-                        <a href="{% url 'exercise_details' exercise.id %}" class="list-group-item list-group-item-action list-group-item-success">{{ exercise.name }}</a>
+                        <a href="{% url 'exercise_details' programId exercise.id %}" class="list-group-item list-group-item-action list-group-item-success">{{ exercise.name }}</a>
                       </div>
                     {% endfor %}
                 </form>
@@ -19,7 +19,7 @@
             <table class="table">
                 <thead class="thead-dark">
                 <tr>
-                  <th>{{ exercise.name  }}</th>
+                  <th>{{ exercises.name  }}</th>
                 </tr>
                 <tr>
                   <td>Date</td>

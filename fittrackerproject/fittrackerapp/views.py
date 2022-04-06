@@ -4,13 +4,15 @@ from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
+from django.template import RequestContext
 from fittrackerapp.models import *
 from fittrackerapp.forms import *
 from django.shortcuts import render
 from .forms import CreateExerciseForm,ProgramForm
 from .models import Exercise
 from django.db.models import Max
-from django.contrib import messages
+from django.views.decorators.http import condition
+
 
 
 
@@ -18,6 +20,11 @@ def home(request):
     if request.user.is_authenticated:
         return redirect('dashboard')
     return render(request, "home.html")
+
+@login_required(login_url="login")
+def message_view(request):
+    return render(request, "message_error.html")
+
 
 
 def register_view(request):
@@ -34,23 +41,41 @@ def register_view(request):
     return render(request, "register.html", {'form': form})
 
 @login_required(login_url="login")
-def exercise_details_view(request, id):
-    if request.method == "POST":
-        exercises_list = Exercise.objects.filter(exercise_program__program_id=request.session['program_id'])
-        exercise = Exercise.objects.get(exercise_program__exercise_id=id)
-        training = Training.objects.get(program_id=request.session['program_id'])
-        data_list = Data.objects.filter(exercise_id=id)
-        form = ExerciseForm(request.POST, label="Poids", number_of_set=exercise.number_of_set)
-        if form.is_valid():
-            exercise = form.save(exercise.id, request.session['training_id'])
-        return redirect('/training_list/' + str(request.session['program_id']))
+def exercise_details_view(request, program_id,exercise_id):
+    program_list = Program.objects.filter(owner=request.user.id)  
+    exercises_list = Exercise.objects.filter(exercise_program__program_id=program_id)
+    program_id_list = [] 
+    exercise_id_list = [] 
+    for exercise_form in exercises_list:
+        exercise_id_list.append(exercise_form.id)
+    for program in program_list:
+        program_id_list.append(program.id)
+    if program_id in program_id_list:
+        if exercise_id in exercise_id_list:
+            exercises_list = Exercise.objects.filter(exercise_program__program_id=program_id)
+            programId=program_id
+            exercises = Exercise.objects.get(exercise_program__exercise_id=exercise_id)
+            training = Training.objects.get(program_id=program_id)
+            data_list = Data.objects.filter(exercise_id=exercise_id)
+            form = ExerciseForm(label=exercises.label_data, number_of_set=exercises.number_of_set)    
+            return render(request, "exercise_details.html", {'exercises': exercises, 'form': form, 'training': training, 'data_list': data_list, 'exercises_list': exercises_list,'programId': programId})
+        else:
+            return redirect('message')
     else:
-        exercises_list = Exercise.objects.filter(exercise_program__program_id=request.session['program_id'])
-        exercise = Exercise.objects.get(exercise_program__exercise_id=id)
-        training = Training.objects.get(program_id=request.session['program_id'])
-        data_list = Data.objects.filter(exercise_id=id)
-        form = ExerciseForm(label=exercise.label_data, number_of_set=exercise.number_of_set)
-        return render(request, "exercise_details.html", {'exercise': exercise, 'form': form, 'training': training, 'data_list': data_list, 'exercises_list': exercises_list})
+        return redirect('message')
+
+@login_required(login_url="login")
+def training_list_view(request, id):
+    program_list = Program.objects.filter(owner=request.user.id)  
+    liste = [] 
+    for program in program_list:
+        liste.append(program.id)
+    if id in liste:
+        exercises_list = Exercise.objects.filter(exercise_program__program_id=id)
+        programId=id
+        return render(request, "training_list.html", {'exercises_list': exercises_list,'programId': programId})
+    else:  
+        return redirect('message')   
 
 
 def login_view(request):
@@ -151,7 +176,6 @@ def create_exercise_view(request):
         if form.is_valid():
             form.instance.rank_in_program=rank['rank_in_program__max']+1
             form.save()
-            messages.success(request, 'L\'exercice a été créer')
             return redirect('dashboard')
     else:
         form = CreateExerciseForm(request.user.id)
@@ -164,7 +188,6 @@ def create_program_view(request):
         if form.is_valid():
             form.save()
             form.instance.owner.add(request.user.id)
-            messages.success(request, 'Le programme a été créer')
             return redirect('dashboard')
     else:
         form = ProgramForm()
@@ -186,8 +209,5 @@ def library_view(request):
 
     return render(request, "library.html", {'program_list': program_list, 'owner_list':owner_list})
 
-@login_required(login_url="login")
-def training_list_view(request, id):
-    exercises_list = Exercise.objects.filter(exercise_program__program_id=id)
-    return render(request, "training_list.html", {'exercises_list': exercises_list})
+
 
