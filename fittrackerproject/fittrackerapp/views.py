@@ -1,19 +1,15 @@
 
 from django.shortcuts import render, redirect
-from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
+from django.http import HttpResponseForbidden
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
-from django.template import RequestContext
 from fittrackerapp.models import *
 from fittrackerapp.forms import *
 from django.shortcuts import render
 from .forms import CreateExerciseForm,ProgramForm
 from .models import Exercise
 from django.db.models import Max
-from django.views.decorators.http import condition
-
-
 
 
 def home(request):
@@ -24,8 +20,6 @@ def home(request):
 @login_required(login_url="login")
 def message_view(request):
     return render(request, "message_error.html")
-
-
 
 def register_view(request):
     if request.method == "POST":
