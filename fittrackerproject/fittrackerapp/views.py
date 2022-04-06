@@ -67,10 +67,10 @@ def exercise_details_view(request, program_id,exercise_id):
 @login_required(login_url="login")
 def training_list_view(request, id):
     program_list = Program.objects.filter(owner=request.user.id)  
-    liste = [] 
+    program_id_list = [] 
     for program in program_list:
-        liste.append(program.id)
-    if id in liste:
+        program_id_list.append(program.id)
+    if id in program_id_list:
         exercises_list = Exercise.objects.filter(exercise_program__program_id=id)
         programId=id
         return render(request, "training_list.html", {'exercises_list': exercises_list,'programId': programId})
