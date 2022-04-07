@@ -42,8 +42,7 @@ def exercise_details_view(request, program_id, exercise_id):
         if check_exercise:
             exercises_list = Exercise.objects.filter(exercise_program__program_id=program_id)
             exercise = Exercise.objects.get(exercise_program__exercise_id=exercise_id)
-            training_list = Training.objects.filter(user_id=request.user.id, program_id=program_id)
-            # data_list = Data.objects.filter(exercise_id=exercise_id) #TOVERIFY            
+            training_list = Training.objects.filter(user_id=request.user.id, program_id=program_id) 
             data = []
             [data.append(Data.objects.filter(exercise_id=exercise_id, training_id=training.id)) for training in training_list]
             zipped_data = zip(training_list, data)            
