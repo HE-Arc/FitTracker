@@ -35,41 +35,32 @@ def register_view(request):
     return render(request, "register.html", {'form': form})
 
 @login_required(login_url="login")
-def exercise_details_view(request, program_id,exercise_id):
-    program_list = Program.objects.filter(owner=request.user.id)  
-    exercises_list = Exercise.objects.filter(exercise_program__program_id=program_id)
-    program_id_list = [] 
-    exercise_id_list = [] 
-    for exercise_form in exercises_list:
-        exercise_id_list.append(exercise_form.id)
-    for program in program_list:
-        program_id_list.append(program.id)
-    if program_id in program_id_list:
-        if exercise_id in exercise_id_list:
+def exercise_details_view(request, program_id, exercise_id):
+    check_program = Program.objects.filter(owner=request.user.id, id=program_id).exists()
+    check_exercise = Exercise.objects.filter(exercise_program__program_id=program_id, id=exercise_id).exists()
+    if check_program:
+        if check_exercise:
             exercises_list = Exercise.objects.filter(exercise_program__program_id=program_id)
-            programId=program_id
-            exercises = Exercise.objects.get(exercise_program__exercise_id=exercise_id)
-            training = Training.objects.get(program_id=program_id)
-            data_list = Data.objects.filter(exercise_id=exercise_id)
-            form = ExerciseForm(label=exercises.label_data, number_of_set=exercises.number_of_set)    
-            return render(request, "exercise_details.html", {'exercises': exercises, 'form': form, 'training': training, 'data_list': data_list, 'exercises_list': exercises_list,'programId': programId})
+            exercise = Exercise.objects.get(exercise_program__exercise_id=exercise_id)
+            training_list = Training.objects.filter(user_id=request.user.id, program_id=program_id)
+            # data_list = Data.objects.filter(exercise_id=exercise_id) #TOVERIFY            
+            data = []
+            [data.append(Data.objects.filter(exercise_id=exercise_id, training_id=training.id)) for training in training_list]
+            zipped_data = zip(training_list, data)            
+            return render(request, "exercise_details.html", {'exercise': exercise, 'training_list': training_list, 'data': data, 'exercises_list': exercises_list, 'program_id': program_id, 'zipped_data': zipped_data})
         else:
             return redirect('message')
     else:
         return redirect('message')
 
 @login_required(login_url="login")
-def training_list_view(request, id):
-    program_list = Program.objects.filter(owner=request.user.id)  
-    program_id_list = [] 
-    for program in program_list:
-        program_id_list.append(program.id)
-    if id in program_id_list:
-        exercises_list = Exercise.objects.filter(exercise_program__program_id=id)
-        programId=id
-        return render(request, "training_list.html", {'exercises_list': exercises_list,'programId': programId})
+def training_list_view(request, program_id): 
+    check_program = Program.objects.filter(owner=request.user.id, id=program_id).exists()
+    if check_program:  
+        exercises_list = Exercise.objects.filter(exercise_program__program_id=program_id)
+        return render(request, "training_list.html", {'exercises_list': exercises_list,'program_id': program_id})
     else:  
-        return redirect('message')   
+        return redirect('message')
 
 
 def login_view(request):

@@ -47,8 +47,7 @@ class Exercise_Program(models.Model):
 class Training(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     program = models.ForeignKey('Program', on_delete=models.CASCADE)
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=False)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=False)
     validated = models.BooleanField(default=False)
 
 
