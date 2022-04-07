@@ -90,8 +90,9 @@ def dashboard_view(request):
     program_list = Program.objects.filter(owner=request.user.id)
     count_training = Training.objects.filter(user_id=request.user.id).count()
     last_training = Training.objects.filter(user_id=request.user.id).last()
+    training_list = Program.objects.filter(owner=request.user.id)
 
-    return render(request, "dashboard.html", {'program_list': program_list, 'count_training': count_training, 'last_training': last_training})
+    return render(request, "dashboard.html", {'program_list': program_list, 'count_training': count_training, 'last_training': last_training,'training_list': training_list})
 
 
 @login_required(login_url="login")
