@@ -186,5 +186,11 @@ def library_view(request):
 
     return render(request, "library.html", {'program_list': program_list, 'owner_list':owner_list})
 
+@login_required(login_url="login")
+def training_view(request, id):
+    program_list = Program.objects.filter(owner=request.user.id)
+    count_training = Training.objects.filter(user_id=request.user.id).count()
+    last_training = Training.objects.filter(user_id=request.user.id).last()
+    return render(request, "dashboard.html", {'program_list': program_list, 'count_training': count_training, 'last_training': last_training})
 
 
