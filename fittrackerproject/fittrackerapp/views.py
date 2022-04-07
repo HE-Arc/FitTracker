@@ -1,5 +1,6 @@
 import re
 from django.shortcuts import render, redirect
+from django.http import HttpResponseForbidden
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
@@ -11,14 +12,14 @@ from .forms import CreateExerciseForm,ProgramForm
 from .models import Exercise_Program,Exercise
 from django.conf import settings
 from django.db.models import Max
-from django.contrib.auth.models import User
-from django.contrib import messages
-
 
 
 def home(request):
     return render(request, "home.html")
 
+@login_required(login_url="login")
+def message_view(request):
+    return render(request, "message_error.html")
 
 def register_view(request):
     if request.method == "POST":
@@ -32,6 +33,33 @@ def register_view(request):
         form = UserCreationForm()  # Create a new instance of this form
     # Send the UserCreationForm to render
     return render(request, "register.html", {'form': form})
+
+@login_required(login_url="login")
+def exercise_details_view(request, program_id, exercise_id):
+    check_program = Program.objects.filter(owner=request.user.id, id=program_id).exists()
+    check_exercise = Exercise.objects.filter(exercise_program__program_id=program_id, id=exercise_id).exists()
+    if check_program:
+        if check_exercise:
+            exercises_list = Exercise.objects.filter(exercise_program__program_id=program_id)
+            exercise = Exercise.objects.get(exercise_program__exercise_id=exercise_id)
+            training_list = Training.objects.filter(user_id=request.user.id, program_id=program_id) 
+            data = []
+            [data.append(Data.objects.filter(exercise_id=exercise_id, training_id=training.id)) for training in training_list]
+            zipped_data = zip(training_list, data)            
+            return render(request, "exercise_details.html", {'exercise': exercise, 'training_list': training_list, 'data': data, 'exercises_list': exercises_list, 'program_id': program_id, 'zipped_data': zipped_data})
+        else:
+            return redirect('message')
+    else:
+        return redirect('message')
+
+@login_required(login_url="login")
+def training_list_view(request, program_id): 
+    check_program = Program.objects.filter(owner=request.user.id, id=program_id).exists()
+    if check_program:  
+        exercises_list = Exercise.objects.filter(exercise_program__program_id=program_id)
+        return render(request, "training_list.html", {'exercises_list': exercises_list,'program_id': program_id})
+    else:  
+        return redirect('message')
 
 
 def login_view(request):
@@ -125,7 +153,6 @@ def create_exercise_view(request):
         if form.is_valid():
             form.instance.rank_in_program=rank['rank_in_program__max']+1
             form.save()
-            messages.success(request, 'L\'exercice a été créer')
             return redirect('dashboard')
     else:
         form = CreateExerciseForm(request.user.id)
@@ -138,9 +165,26 @@ def create_program_view(request):
         if form.is_valid():
             form.save()
             form.instance.owner.add(request.user.id)
-            messages.success(request, 'Le programme a été créer')
             return redirect('dashboard')
     else:
         form = ProgramForm()
-    return render(request,"program.html",{'form':form})
+    return render(request,"create_program.html",{'form':form})
+
+
+@login_required(login_url="login")
+def library_view(request):
+    # Show public program
+    program_list = Program.objects.all().filter(public=True).exclude(owner=request.user.id)
+    user = request.user
+
+    if request.method == "POST":
+        data = request.POST
+        action = data.get('add-program')
+        program = Program.objects.filter(id=action).get()
+        program.owner.add(user)
+    owner_list = Program.objects.filter(owner=user.id)
+
+    return render(request, "library.html", {'program_list': program_list, 'owner_list':owner_list})
+
+
 
