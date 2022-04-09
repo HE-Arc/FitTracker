@@ -3,7 +3,9 @@
 {% block content %}
     <div class="container ml-20">
         <h1 class="text-5xl text-left pt-10">Bibliothèque</h1>
-        <div class="alert alert-info" role="alert">Pour pouvoir effectuer un programme publique, ajoutez-le à vos programmes.</div>
+        <div class="alert alert-info" role="alert">
+            Pour pouvoir effectuer un programme publique, ajoutez-le à vos programmes.
+        </div>
         <h2 class="text-3xl my-10">Programmes publiques</h2>
         <div class="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
             <div class="border">
@@ -21,31 +23,33 @@
                     {% endfor %}
                 </div>
             </div>
-
             <h2 class="text-3xl my-10">Mes programmes partagés</h2>
             <div class="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
                 <div class="border">
                     <ul>
-                    {% for shared_program in shared_list %}
-                    <li><div class="my-5">{{ shared_program.name }}</div></il>
-                    {% empty %}
-                        Aucun programme disponible
-                    {% endfor %}
-                    </ul>
+                        {% for shared_program in shared_list %}
+                            <li>
+                                <div class="my-5">{{ shared_program.name }}</div>
+                                </il>
+                            {% empty %}
+                                Aucun programme disponible
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </div>
-            </div>
-
-            <h2 class="text-3xl my-10">Mes programmes</h2>
-            <div class="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-                <div class="border">
-                    <ul>
-                    {% for owner_program in owner_list %}
-                    <li><div class="my-5">{{ owner_program.name }}</div></il>
-                    {% empty %}
-                        Aucun programme disponible
-                    {% endfor %}
-                    </ul>
+                <h2 class="text-3xl my-10">Mes programmes</h2>
+                <div class="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
+                    <div class="border">
+                        <ul>
+                            {% for owner_program in owner_list %}
+                                <li>
+                                    <div class="my-5">{{ owner_program.name }}</div>
+                                    </il>
+                                {% empty %}
+                                    Aucun programme disponible
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    {% endblock %}
+            {% endblock %}

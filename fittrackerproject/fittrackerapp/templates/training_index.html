@@ -21,15 +21,14 @@
                                     {% if exercise.id in is_done %}
                                         <span class="">Exercice effectué</span>
                                     {% else %}
-                                        <a href="{% url 'exercise' exercise.id %}"
-                                           class="">Démarrer l'exercice</a>
+                                        <a href="{% url 'exercise' exercise.id %}" class="">Démarrer l'exercice</a>
                                     {% endif %}
                                 </td>
                             </tr>
-                            {% endfor %}
+                        {% endfor %}
                     </tbody>
                 </table>
-                <button type="button" class="btn btn-primary">Terminer l'entraînement</button>
+                <button type="submit" class="btn btn-primary">Terminer l'entraînement</button>
             {% endblock %}
         </form>
     </div>
