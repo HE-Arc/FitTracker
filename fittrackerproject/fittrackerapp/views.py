@@ -42,10 +42,10 @@ def exercise_details_view(request, program_id, exercise_id):
         if check_exercise:
             exercises_list = Exercise.objects.filter(exercise_program__program_id=program_id)
             exercise = Exercise.objects.get(exercise_program__exercise_id=exercise_id)
-            training_list = Training.objects.filter(user_id=request.user.id, program_id=program_id) 
+            training_list = Training.objects.filter(user_id=request.user.id, program_id=program_id)
             data = []
             [data.append(Data.objects.filter(exercise_id=exercise_id, training_id=training.id)) for training in training_list]
-            zipped_data = zip(training_list, data)            
+            zipped_data = zip(training_list, data)
             return render(request, "exercise_details.html", {'exercise': exercise, 'training_list': training_list, 'data': data, 'exercises_list': exercises_list, 'program_id': program_id, 'zipped_data': zipped_data})
         else:
             return redirect('message')
@@ -53,12 +53,12 @@ def exercise_details_view(request, program_id, exercise_id):
         return redirect('message')
 
 @login_required(login_url="login")
-def training_list_view(request, program_id): 
+def training_list_view(request, program_id):
     check_program = Program.objects.filter(owner=request.user.id, id=program_id).exists()
-    if check_program:  
+    if check_program:
         exercises_list = Exercise.objects.filter(exercise_program__program_id=program_id)
         return render(request, "training_list.html", {'exercises_list': exercises_list,'program_id': program_id})
-    else:  
+    else:
         return redirect('message')
 
 
@@ -91,8 +91,8 @@ def dashboard_view(request):
     count_training = Training.objects.filter(user_id=request.user.id).count()
     last_training = Training.objects.filter(user_id=request.user.id).last()
     training_list = Program.objects.filter(owner=request.user.id)
-
-    return render(request, "dashboard.html", {'program_list': program_list, 'count_training': count_training, 'last_training': last_training,'training_list': training_list})
+    datas_list = zip(program_list, training_list)
+    return render(request, "dashboard.html", {'datas_list':datas_list, 'count_training': count_training, 'last_training': last_training})
 
 
 @login_required(login_url="login")
@@ -129,7 +129,7 @@ def exercise_view(request, id):
                             number_of_set=exercise.number_of_set)
         if form.is_valid():
             if request.session['first'] == 1:
-                training = Training(program_id=request.session['program_id'])
+                training = Training(program_id=request.session['program_id'], user_id=request.user.id)
                 training.save()
                 request.session['first'] = 0
                 request.session['training_id'] = training.id
