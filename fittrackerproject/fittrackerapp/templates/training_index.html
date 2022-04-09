@@ -4,17 +4,32 @@
     <div class="container ml-20">
         <h1 class="text-5xl pt-10">Exercises du programme</h1>
         <div>
-            <form>
-                {% for exercise in exercises_list %}
-                    <div class="border-2 m-2" style="width: 18rem;">
-                        <div class="flex">
-                            <h5 class="">{{ exercise.name }}</h5>
-                            <a href="{% url 'exercise' exercise.id %}"
-                               class="bg-blue-500 hover:bg-blue-700 text-white font-bold px-2 rounded">Aller à l'exercice</a>
-                        </div>
-                    </div>
-                {% endfor %}
-                <button type="submit" class="mb-3 bg-blue-300 rounder-full">Terminer l'entraînement</button>
+            <form action="" method="post">
+                {% csrf_token %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Exercice</th>
+                            <th scope="col">Etat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            {% for exercise in exercises_list %}
+                                <td>{{ exercise.name }}</td>
+                                <td>
+                                    {% if exercise.id in is_done %}
+                                        <span class="">Exercice effectué</span>
+                                    {% else %}
+                                        <a href="{% url 'exercise' exercise.id %}"
+                                           class="">Démarrer l'exercice</a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                    </tbody>
+                </table>
+                <button type="button" class="btn btn-primary">Terminer l'entraînement</button>
             {% endblock %}
         </form>
     </div>
