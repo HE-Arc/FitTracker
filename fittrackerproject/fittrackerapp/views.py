@@ -1,14 +1,13 @@
 import re
 from django.shortcuts import render, redirect
 from django.http import HttpResponseForbidden
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from fittrackerapp.models import *
 from fittrackerapp.forms import *
 from django.template import loader
 from django.shortcuts import render
-from .forms import CreateExerciseForm,ProgramForm
+from .forms import CreateExerciseForm,ProgramForm,AuthenticationForm,UserCreationForm
 from .models import Exercise_Program,Exercise
 from django.conf import settings
 from django.db.models import Max
@@ -24,7 +23,7 @@ def message_view(request):
 def register_view(request):
     if request.method == "POST":
         # Pass information from form with request.POST
-        form = UserCreationForm(request.POST)
+        form = UserCreationForm(data=request.POST)
         if form.is_valid():  # Check if form is valid or not (User exist ? Password ok ? etc.)
             user = form.save()  # Log the user in
             login(request, user)
