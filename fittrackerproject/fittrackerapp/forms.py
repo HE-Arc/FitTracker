@@ -88,12 +88,23 @@ class ProgramForm(forms.ModelForm):
             'discipline': forms.Select(attrs={'class': 'form-control', }),
             'public': forms.CheckboxInput(attrs={'class': 'form-check-input', }),
         }
-        
+
 class AuthenticationForm(AuthenticationForm):
+    def __init__(self, *args, **kwargs):
+        super(AuthenticationForm, self).__init__(*args, **kwargs)
+
+        for fieldname in ['username', 'password']:
+            self.fields[fieldname].help_text = None
+
     username = forms.CharField(label=("Nom d'utilisateur"),max_length=254,widget=forms.TextInput(attrs={'class':'form-control',}))
     password = forms.CharField(label=("Mot de passe"), widget=forms.PasswordInput(attrs={'class':'form-control',}))
-    
+
 class UserCreationForm(UserCreationForm):
+    def __init__(self, *args, **kwargs):
+        super(UserCreationForm, self).__init__(*args, **kwargs)
+
+        for fieldname in ['username', 'password1', 'password2']:
+            self.fields[fieldname].help_text = None
     username = forms.CharField(label=("Nom d'utilisateur"),max_length=254,widget=forms.TextInput(attrs={'class':'form-control',}))
     password1 = forms.CharField(label=("Mot de passe"), widget=forms.PasswordInput(attrs={'class':'form-control',}))
     password2 = forms.CharField(label=("Confimez le mot de passe"), widget=forms.PasswordInput(attrs={'class':'form-control',}))
