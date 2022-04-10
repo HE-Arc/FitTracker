@@ -46,12 +46,11 @@ def login_view(request):
             login(request, user)
             if 'next' in request.POST:
                 return redirect(request.POST.get('next'))
-        else:
             return redirect('dashboard')
     else:
         form = AuthenticationForm()  # Create a new instance of this form
         # Send the UserCreationForm to render
-        return render(request, "login.html", {'form': form})
+    return render(request, "login.html", {'form': form})
 
 
 @login_required(login_url="login")
