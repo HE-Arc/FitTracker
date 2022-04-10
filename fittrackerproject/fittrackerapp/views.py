@@ -62,8 +62,7 @@ def exercise_details_view(request, program_id, exercise_id):
         if check_exercise:
             exercises_list = Exercise.objects.filter(
                 exercise_program__program_id=program_id)
-            exercise = Exercise.objects.get(
-                exercise_program__exercise_id=exercise_id)
+            exercise = Exercise.objects.filter(exercise_program__exercise_id=exercise_id).first()
             training_list = Training.objects.filter(
                 user_id=request.user.id, program_id=program_id)
             data = []
@@ -142,7 +141,7 @@ def program_view(request, id):
 @login_required(login_url="login")
 def exercise_view(request, id):
     if request.method == "POST":
-        exercise = Exercise.objects.get(exercise_program__exercise_id=id)
+        exercise = Exercise.objects.filter(exercise_program__exercise_id=id).first()
         # Pass information from form with request.POST
         form = ExerciseForm(request.POST, label="Poids",
                             number_of_set=exercise.number_of_set)
@@ -153,7 +152,6 @@ def exercise_view(request, id):
                 training.save()
                 request.session['first'] = 0
                 request.session['training_id'] = training.id
-                print(request.session['training_id'])
 
             exercise = form.save(exercise.id, request.session['training_id'])
         return redirect('/program/' + str(request.session['program_id']))
@@ -161,11 +159,9 @@ def exercise_view(request, id):
         if 'training_id' in request.session:
             already_done = Data.objects.filter(
                 training_id=request.session['training_id'], exercise_id=id).first()
-            print(f"already done : {already_done}")
             if already_done != None:
-                print("STOP")
                 return redirect('/program/' + str(request.session['program_id']))
-        exercise = Exercise.objects.get(exercise_program__exercise_id=id)
+        exercise = Exercise.objects.filter(exercise_program__exercise_id=id).first()
         form = ExerciseForm(label=exercise.label_data,
                             number_of_set=exercise.number_of_set)
         return render(request, "exercise.html", {'exercise': exercise, 'form': form})
