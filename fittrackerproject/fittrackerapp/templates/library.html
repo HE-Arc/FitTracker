@@ -14,42 +14,42 @@
                         {% csrf_token %}
                         <div class="my-5">
                             {{ program.name }}
-                            <button type="submit" name="add-program" value="{{ program.id }}">
-                                Ajouter à mes programmes
-                            </div>
-                        </form>
+                            <button type="submit" name="add-program" value="{{ program.id }}"/>
+                            Ajouter à mes programmes
+                        </div>
+                    </form>
+                {% empty %}
+                    Aucun programme disponible
+                {% endfor %}
+            </div>
+        </div>
+        <h2 class="text-3xl my-10">Mes programmes partagés</h2>
+        <div class="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
+            <div class="border">
+                <ul>
+                    {% for shared_program in shared_list %}
+                        <li>
+                            <div class="my-5">{{ shared_program.name }}</div>
+                        </li>
                     {% empty %}
                         Aucun programme disponible
                     {% endfor %}
-                </div>
+                </ul>
             </div>
-            <h2 class="text-3xl my-10">Mes programmes partagés</h2>
-            <div class="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-                <div class="border">
-                    <ul>
-                        {% for shared_program in shared_list %}
-                            <li>
-                                <div class="my-5">{{ shared_program.name }}</div>
-                                </il>
-                            {% empty %}
-                                Aucun programme disponible
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-                <h2 class="text-3xl my-10">Mes programmes</h2>
-                <div class="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-                    <div class="border">
-                        <ul>
-                            {% for owner_program in owner_list %}
-                                <li>
-                                    <div class="my-5">{{ owner_program.name }}</div>
-                                    </il>
-                                {% empty %}
-                                    Aucun programme disponible
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            {% endblock %}
+        </div>
+        <h2 class="text-3xl my-10">Mes programmes</h2>
+        <div class="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
+            <div class="border">
+                <ul>
+                    {% for owner_program in owner_list %}
+                        <li>
+                            <div class="my-5">{{ owner_program.name }}</div>
+                        </li>
+                    {% empty %}
+                        Aucun programme disponible
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
