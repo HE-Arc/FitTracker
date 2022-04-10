@@ -4,33 +4,42 @@
     <div class="container ml-20">
         <h1 class="text-5xl text-left pt-10">Dashboard</h1>
         <div class="container mt-20 border-2 border-gray">
-            <div class="mx-20">
-                <i class="fas fa-envelope pe-2"><span class="mx-10">{{ user.email  }}</span></i>
+            <div>
+                <div>Nombre d'entraînements : {{ count_training }}</div>
+                {% if count_training > 0 %}
+                    <div class="">
+                        <div class="">Dernier entraînement : le {{ last_training.date|date:'d M y' }}</div>
+                    </div>
+                {% endif %}
             </div>
-            <div class="mx-20">Nombre d'entraînements : {{ count_training }} </div>
-            <div class="mx-20">Dernier entraînement : le {{ last_training.date|date:'d M y' }} </div>
-        </div>
-        <div class="grid border-4 border-black mt-10 bg-red-200">
-            <h2 class="text-3xl my-10">Mes programmes</h2>
-            <div class="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-                <div class="border">
-                    {% for program in program_list %}
-                        <div class="my-5">
-                            <a href="{% url 'training' program.id %}">{{ program.name }}</a>
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
+            <div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Nom</th>
+                            <th scope="col">Entrainement</th>
+                            <th scope="col">Données</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            {% for program, training in datas_list %}
+                                <td>{{ program.name }}</td>
+                                <td>
+                                    <div class="my-5">
+                                        <a href="{% url 'training' program.id %}">GO !</a>
+                                    </div>
+                                </td>
 
-            <h2 class="text-3xl my-10">Mes entraînements</h2>
-            <div class="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-                <div>
-                    {% for training in training_list %}
-                        <div class="my-5 border border-black">
-                            <a href="{% url 'training_list' training.id %}">{{ training.name }}</a>
-                        </div>
-                    {% endfor %}
-                </div>
+                                <td>
+                                    <div class="my-5 border border-black">
+                                        <a href="{% url 'training_list' training.id %}">Voir les données</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
