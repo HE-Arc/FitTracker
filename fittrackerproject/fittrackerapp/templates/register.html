@@ -1,0 +1,12 @@
+{% extends 'base_layout.html' %}
+{% block title %}Inscription{% endblock %}
+{% block content %}
+<div class="col-md-4">
+<h1>Inscription</h1><br>
+<form class="" action="register" method="post">
+	{% csrf_token %}
+	{{ form.as_p  }}
+	<input type="submit" class="btn btn-primary" value="Créer un compte">
+</form>
+</div>
+{% endblock %}

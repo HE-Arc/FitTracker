@@ -1,0 +1,16 @@
+[
+    {
+        "model": "fittrackerapp.discipline",
+        "pk": 1,
+        "fields": {
+            "name": "default"
+        }
+    },
+    {
+        "model": "fittrackerapp.category",
+        "pk": 1,
+        "fields": {
+            "name": "default"
+        }
+    }    
+]

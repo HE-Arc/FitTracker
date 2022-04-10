@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+    {% load static %}
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>
+            {% block title %}{% endblock %}
+        </title>
+        <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
+        <link rel="stylesheet"
+              href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet"
+              href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    </head>
+    <body class="bg-gray-50">
+        <div class="wrapper">
+            <div class="sidebar-container">
+                <div class="sidebar-logo">FitTracker</div>
+                <ul class="sidebar-navigation">
+                    <li class="header">Navigation</li>
+                    {% if user.is_authenticated %}
+                        <li>
+                            <a href="{% url 'dashboard' %}">
+                                <i class="fa fa-tachometer" aria-hidden="true"></i> Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <li>
+                            <a href="{% url 'library' %}">
+                                <i class="fa fa-book" aria-hidden="true"></i> Bibliothèque
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'program' %}">
+                            <i class="fa fa-pen" aria-hidden="true"></i> Créer un programme
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'exercise' %}">
+                        <i class="fa fa-pen" aria-hidden="true"></i> Créer un exercice
+                </a>
+            </li>
+            <li class="header">Profil</li>
+            <li>
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-link">Déconnexion</button>
+                </form>
+            </li>
+        {% else %}
+            <li>
+                <a href="{% url 'register' %}">
+                    <i class="fa fa-pen" aria-hidden="true"></i> Inscription
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'login' %}">
+                <i class="fa fa-cog" aria-hidden="true"></i> Connexion
+        </a>
+    </li>
+{% endif %}
+</ul>
+</div>
+<div class="content-container">
+    <div class="container-fluid">
+        {% block content %}{% endblock %}
+    </div>
+</div>
+</div>
+</div>
+<link rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+      integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr"
+      crossorigin="anonymous">
+</body>
+</html>
