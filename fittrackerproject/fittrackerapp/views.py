@@ -1,16 +1,16 @@
 import re
 from django.shortcuts import render, redirect
-from django.http import HttpResponseForbidden
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from fittrackerapp.models import *
 from fittrackerapp.forms import *
 from django.template import loader
 from django.shortcuts import render
-from .forms import CreateExerciseForm, ProgramForm, AuthenticationForm,UserCreationForm
+from .forms import CreateExerciseForm, ProgramForm, AuthenticationForm, UserCreationForm
 from .models import Exercise_Program, Exercise
 from django.conf import settings
 from django.db.models import Max
+from django.core.exceptions import PermissionDenied
 
 
 def home(request):
@@ -62,19 +62,19 @@ def exercise_details_view(request, program_id, exercise_id):
         if check_exercise:
             exercises_list = Exercise.objects.filter(
                 exercise_program__program_id=program_id)
-            exercise = Exercise.objects.get(
-                exercise_program__exercise_id=exercise_id)
+            exercise = Exercise.objects.filter(
+                exercise_program__exercise_id=exercise_id).first()
             training_list = Training.objects.filter(
-                user_id=request.user.id, program_id=program_id)
+                user_id=request.user.id, program_id=program_id, validated=True)
             data = []
             [data.append(Data.objects.filter(exercise_id=exercise_id,
                          training_id=training.id)) for training in training_list]
             zipped_data = zip(training_list, data)
             return render(request, "exercise_details.html", {'exercise': exercise, 'training_list': training_list, 'data': data, 'exercises_list': exercises_list, 'program_id': program_id, 'zipped_data': zipped_data})
         else:
-            return redirect('message')
+            raise PermissionDenied("Erreur : Aucune donnée correspondante")
     else:
-        return redirect('message')
+        raise PermissionDenied("Erreur : Aucune donnée correspondante")
 
 
 @login_required(login_url="login")
@@ -86,7 +86,7 @@ def training_list_view(request, program_id):
             exercise_program__program_id=program_id)
         return render(request, "training_list.html", {'exercises_list': exercises_list, 'program_id': program_id})
     else:
-        return redirect('message')
+        raise PermissionDenied("Erreur : Aucune donnée correspondante")
 
 
 def logout_view(request):
@@ -131,7 +131,8 @@ def program_view(request, id):
 
         referer = request.META.get('HTTP_REFERER')
         if referer is None:
-            pass  # request.META.setdefault('HTTP_REFERER', 'dashboard')
+            # request.session['first'] = 1
+            pass
         else:
             if 'dashboard' in request.META['HTTP_REFERER']:
                 request.session['first'] = 1
@@ -142,7 +143,8 @@ def program_view(request, id):
 @login_required(login_url="login")
 def exercise_view(request, id):
     if request.method == "POST":
-        exercise = Exercise.objects.get(exercise_program__exercise_id=id)
+        exercise = Exercise.objects.filter(
+            exercise_program__exercise_id=id).first()
         # Pass information from form with request.POST
         form = ExerciseForm(request.POST, label="Poids",
                             number_of_set=exercise.number_of_set)
@@ -153,7 +155,6 @@ def exercise_view(request, id):
                 training.save()
                 request.session['first'] = 0
                 request.session['training_id'] = training.id
-                print(request.session['training_id'])
 
             exercise = form.save(exercise.id, request.session['training_id'])
         return redirect('/program/' + str(request.session['program_id']))
@@ -161,11 +162,12 @@ def exercise_view(request, id):
         if 'training_id' in request.session:
             already_done = Data.objects.filter(
                 training_id=request.session['training_id'], exercise_id=id).first()
-            print(f"already done : {already_done}")
             if already_done != None:
-                print("STOP")
                 return redirect('/program/' + str(request.session['program_id']))
-        exercise = Exercise.objects.get(exercise_program__exercise_id=id)
+        exercise = Exercise.objects.filter(
+            exercise_program__exercise_id=id).first()
+        if exercise == None:
+            raise PermissionDenied("Vous n'avez pas accès à cette page")
         form = ExerciseForm(label=exercise.label_data,
                             number_of_set=exercise.number_of_set)
         return render(request, "exercise.html", {'exercise': exercise, 'form': form})
@@ -212,9 +214,10 @@ def library_view(request):
         action = data.get('add-program')
         program = Program.objects.filter(id=action).get()
         program.owner.add(user)
-    owner_list = Program.objects.filter(owner=user.id)
+    owner_list = Program.objects.filter(owner=user.id, public=False)
+    shared_list = Program.objects.filter(owner=user.id, public=True)
 
-    return render(request, "library.html", {'program_list': program_list, 'owner_list': owner_list})
+    return render(request, "library.html", {'program_list': program_list, 'owner_list': owner_list, 'shared_list': shared_list})
 
 
 @login_required(login_url="login")

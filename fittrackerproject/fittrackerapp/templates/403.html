@@ -1,0 +1,9 @@
+{% extends 'base_layout.html' %}
+{% block title %}Accès refusé{% endblock %}
+{% block content %}
+{% if exception %}
+  <p>{{ exception }}</p>
+{% else %}
+  <p>Oups.. Une erreur s'est produite !</p>
+{% endif %}
+{% endblock %}
