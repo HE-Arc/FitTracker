@@ -7,6 +7,7 @@ from urllib import request
 from django import forms
 from .models import Exercise, Program
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
 
 class ExerciseForm(forms.Form):
@@ -87,3 +88,12 @@ class ProgramForm(forms.ModelForm):
             'discipline': forms.Select(attrs={'class': 'form-control', }),
             'public': forms.CheckboxInput(attrs={'class': 'form-check-input', }),
         }
+        
+class AuthenticationForm(AuthenticationForm):
+    username = forms.CharField(label=("Nom d'utilisateur"),max_length=254,widget=forms.TextInput(attrs={'class':'form-control',}))
+    password = forms.CharField(label=("Mot de passe"), widget=forms.PasswordInput(attrs={'class':'form-control',}))
+    
+class UserCreationForm(UserCreationForm):
+    username = forms.CharField(label=("Nom d'utilisateur"),max_length=254,widget=forms.TextInput(attrs={'class':'form-control',}))
+    password1 = forms.CharField(label=("Mot de passe"), widget=forms.PasswordInput(attrs={'class':'form-control',}))
+    password2 = forms.CharField(label=("Confimez le mot de passe"), widget=forms.PasswordInput(attrs={'class':'form-control',}))
