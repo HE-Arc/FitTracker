@@ -2,15 +2,17 @@
 {% block title %}Home{% endblock %}
 {% block content %}
 <div class="container ml-20">
-  <h1 class="text-5xl text-left pt-10">Home</h1></br>
+  <br>
+  <h1 class="text-5xl text-left pt-10">FitTracker</h1></br>
   <div class="form-group">
     <div>
-      
-      <a href="{% url 'register' %}">Sign Up</a>
-
-      <a href="{% url 'login' %}">Login</a>
-    </div>
+      <p>Bienvenue sur FitTracker. Rendez-vous sur la page de <a href="{% url 'login' %}" >connexion</a> pour tester l'application ou sur la page d'<a href="{% url 'register' %}" >inscription</a> si vous n'avez pas encore de compte!
+    </div><br><br><br><br>
+    <div class="text-center">
+      <img src="https://i.goopics.net/hl9p04.png" alt="Image" class="rounded mx-auto d-block">
+     </div>
   </div>
+
 </div>
   {%  endblock %}
 
