@@ -10,6 +10,7 @@
             {% for field in form %}
             <div>
                 <h2>Série {{forloop.counter}}</h2>
+                <label>{{ field.label }}</label>
                 <div>{{ field }}</div>
                 {% endfor %}
             </div><br>
